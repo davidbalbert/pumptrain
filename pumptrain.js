@@ -39,6 +39,20 @@ window.onload = function() {
       },
       flood: function() {
         this._changeWaterLevel(1);
+
+        // Game over
+        if (this.waterLevel == 9) {
+          clearInterval(pumpTimer);
+          pumpTimer = null;
+
+          clearInterval(waterTimer);
+          waterTimer = null;
+
+          clearInterval(stationsSelectTimer);
+          stationsSelectTimer = null;
+
+          Crafty.scene("gameover");
+        }
       }
     });
 
@@ -97,6 +111,23 @@ window.onload = function() {
       }, 1000);
     }, 5000);
 
+  });
+
+  Crafty.scene("gameover", function() {
+    Crafty.e("2D, DOM, Text")
+      .attr({x: 150, y: 200, w: 500, h: 100})
+      .text("Game Over :(")
+      .textFont({family: "Arial", size: '100px', weight: 'bold'})
+      .textColor("#FF0000");
+
+    Crafty.e("2D, DOM, Text")
+      .attr({x: 150, y: 250, w: 500, h: 100})
+      .text("Tap the spacebar to play again")
+      .textFont({family: "Arial", size: '30px', weight: 'bold'})
+      .textColor("#FF0000")
+      .bind("KeyDown", function() {
+        Crafty.scene("main");
+      });
   });
 
   Crafty.scene("main");
