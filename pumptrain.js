@@ -2,25 +2,32 @@ window.onload = function() {
   WIDTH = 800;
   HEIGHT = 576;
 
-  SPRITE_WIDTH = SPRITE_HEIGHT = 32;
+  SPRITE_WIDTH = SPRITE_HEIGHT = 53;
 
   INITIAL_WATER_LEVEL = 2;
 
   Crafty.init(WIDTH, HEIGHT);
   Crafty.canvas.init();
 
-  Crafty.sprite(SPRITE_WIDTH, "sprites.png", {
-    train: [0, 0],
-    station0: [1, 0],
-    station1: [2, 0],
-    station2: [3, 0],
-    station3: [4, 0],
-    station4: [5, 0],
-    station5: [6, 0],
-    station6: [7, 0],
-    station7: [8, 0],
-    station8: [9, 0],
-    station9: [10, 0]
+  Crafty.sprite(SPRITE_WIDTH, "images/sprite.png", {
+    trainUp:        [0, 0],
+    trainUpRight:   [1, 0],
+    trainRight:     [2, 0],
+    trainDownRight: [3, 0],
+    trainDown:      [4, 0],
+    trainDownLeft:  [5, 0],
+    trainLeft:      [6, 0],
+    trainUpLeft:    [7, 0],
+    station0:       [0, 1],
+    station1:       [1, 1],
+    station2:       [2, 1],
+    station3:       [3, 1],
+    station4:       [4, 1],
+    station5:       [5, 1],
+    station6:       [6, 1],
+    station7:       [7, 1],
+    station8:       [8, 1],
+    station9:       [9, 1]
   });
 
   Crafty.scene("main", function() {
@@ -31,7 +38,7 @@ window.onload = function() {
       _changeWaterLevel: function(delta) {
         if (this.waterLevel > 0 && delta === -1 || this.waterLevel < 9 && delta === 1) {
           this.waterLevel += delta;
-          this.sprite(1 + this.waterLevel, 0, 1, 1);
+          this.sprite(this.waterLevel, 1, 1, 1);
         }
       },
       pump: function() {
@@ -48,7 +55,7 @@ window.onload = function() {
                y: Crafty.math.randomInt(0, HEIGHT - SPRITE_HEIGHT)});
     }
 
-    Crafty.e("2D, Canvas, train, Multiway, Collision")
+    Crafty.e("2D, Canvas, trainDownRight, Multiway, Collision")
       .attr({x: Crafty.math.randomInt(0, WIDTH - SPRITE_WIDTH),
              y: Crafty.math.randomInt(0, HEIGHT - SPRITE_HEIGHT)})
       .multiway(4, {UP_ARROW: -90, DOWN_ARROW: 90, RIGHT_ARROW: 0, LEFT_ARROW: 180})
