@@ -31,6 +31,7 @@ window.onload = function() {
       pump: function() {
         if (this.waterLevel > 0) {
           this.waterLevel--;
+          this.sprite(1 + this.waterLevel, 0, 1, 1);
         }
       }
     });
@@ -60,12 +61,11 @@ window.onload = function() {
           this.y = HEIGHT - SPRITE_HEIGHT;
         }
       })
-      .onHit("station", function(entities) {
+      .onHit("Station", function(entities) {
         var station = entities[0].obj;
         if (pumpTimer == null) {
           pumpTimer = setInterval(function() {
             station.pump();
-            console.log(station.waterLevel);
           }, 1000);
         }
       }, function() {
