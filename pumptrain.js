@@ -62,8 +62,6 @@ window.onload = function() {
                y: Crafty.math.randomInt(0, HEIGHT - SPRITE_HEIGHT)});
     }
 
-    var pumpTimer = null;
-
     Crafty.e("2D, Canvas, train, Multiway, Collision")
       .attr({x: Crafty.math.randomInt(0, WIDTH - SPRITE_WIDTH),
              y: Crafty.math.randomInt(0, HEIGHT - SPRITE_HEIGHT)})
@@ -81,16 +79,15 @@ window.onload = function() {
           this.y = HEIGHT - SPRITE_HEIGHT;
         }
       })
-      .onHit("Station", function(entities) {
-        var station = entities[0].obj;
-        if (pumpTimer == null) {
-          pumpTimer = setInterval(function() {
-            station.pump();
-          }, 1000);
+      .bind("KeyDown", function(e) {
+        if (e.key == Crafty.keys['SPACE'] && this.currentStation != null) {
+          this.currentStation.pump();
         }
+      })
+      .onHit("Station", function(entities) {
+        this.currentStation = entities[0].obj;
       }, function() {
-        clearInterval(pumpTimer);
-        pumpTimer = null;
+        this.currentStation = null;
       });
 
 
@@ -111,8 +108,8 @@ window.onload = function() {
         Crafty("Flooding Station").each(function() {
           this.flood();
         });
-      }, 2000);
-    }, 10000);
+      }, 1000);
+    }, 5000);
 
   });
 
