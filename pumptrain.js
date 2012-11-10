@@ -8,7 +8,8 @@ window.onload = function() {
   Crafty.canvas.init();
 
   Crafty.sprite(SPRITE_WIDTH, "sprites.png", {
-    train: [0, 0]
+    train: [0, 0],
+    station: [1, 0]
   });
 
   Crafty.scene("main", function() {
@@ -29,6 +30,10 @@ window.onload = function() {
           this.y = HEIGHT - SPRITE_HEIGHT;
         }
       });
+
+    Crafty.e("2D, Canvas, station")
+      .attr({x: Crafty.math.randomInt(0, WIDTH - SPRITE_WIDTH),
+             y: Crafty.math.randomInt(0, HEIGHT - SPRITE_HEIGHT)});
   });
 
   Crafty.scene("main");
