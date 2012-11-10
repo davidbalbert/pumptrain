@@ -13,7 +13,26 @@ window.onload = function() {
   });
 
   Crafty.scene("main", function() {
-    Crafty.e("2D, Canvas, train, Multiway")
+    Crafty.c("Station", {
+      init: function() {
+        this.waterLevel = 10;
+      },
+      pump: function() {
+        if (this.waterLevel > 0) {
+          this.waterLevel--;
+        }
+      }
+    });
+
+    for (var i=0; i<3; i++) {
+      Crafty.e("2D, Canvas, Station, station")
+        .attr({x: Crafty.math.randomInt(0, WIDTH - SPRITE_WIDTH),
+               y: Crafty.math.randomInt(0, HEIGHT - SPRITE_HEIGHT)});
+    }
+
+    var pumpTimer = null;
+
+    Crafty.e("2D, Canvas, train, Multiway, Collision")
       .attr({x: Crafty.math.randomInt(0, WIDTH - SPRITE_WIDTH),
              y: Crafty.math.randomInt(0, HEIGHT - SPRITE_HEIGHT)})
       .multiway(4, {UP_ARROW: -90, DOWN_ARROW: 90, RIGHT_ARROW: 0, LEFT_ARROW: 180})
@@ -29,11 +48,19 @@ window.onload = function() {
         } else if (this.y > HEIGHT - SPRITE_HEIGHT) {
           this.y = HEIGHT - SPRITE_HEIGHT;
         }
+      })
+      .onHit("station", function(entities) {
+        var station = entities[0].obj;
+        if (pumpTimer == null) {
+          pumpTimer = setInterval(function() {
+            station.pump();
+            console.log(station.waterLevel);
+          }, 1000);
+        }
+      }, function() {
+        clearInterval(pumpTimer);
+        pumpTimer = null;
       });
-
-    Crafty.e("2D, Canvas, station")
-      .attr({x: Crafty.math.randomInt(0, WIDTH - SPRITE_WIDTH),
-             y: Crafty.math.randomInt(0, HEIGHT - SPRITE_HEIGHT)});
   });
 
   Crafty.scene("main");
