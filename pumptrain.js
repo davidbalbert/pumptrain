@@ -4,7 +4,7 @@ window.onload = function() {
 
   SPRITE_WIDTH = SPRITE_HEIGHT = 32;
 
-  INITIAL_WATER_LEVEL = 9;
+  INITIAL_WATER_LEVEL = 2;
 
   Crafty.init(WIDTH, HEIGHT);
   Crafty.canvas.init();
@@ -28,11 +28,17 @@ window.onload = function() {
       init: function() {
         this.waterLevel = INITIAL_WATER_LEVEL;
       },
-      pump: function() {
-        if (this.waterLevel > 0) {
-          this.waterLevel--;
+      _changeWaterLevel: function(delta) {
+        if (this.waterLevel > 0 && delta === -1 || this.waterLevel < 9 && delta === 1) {
+          this.waterLevel += delta;
           this.sprite(1 + this.waterLevel, 0, 1, 1);
         }
+      },
+      pump: function() {
+        this._changeWaterLevel(-1);
+      },
+      flood: function() {
+        this._changeWaterLevel(1);
       }
     });
 
@@ -72,6 +78,28 @@ window.onload = function() {
         clearInterval(pumpTimer);
         pumpTimer = null;
       });
+
+
+    var waterTimer = null;
+    var stationsSelectTimer = setInterval(function() {
+      if (waterTimer != null) {
+        clearInterval(waterTimer);
+      }
+      Crafty("Station").each(function() {
+        if (Crafty.math.randomInt(0,1) == 1) {
+          this.addComponent("Flooding");
+        } else {
+          this.removeComponent("Flooding");
+        }
+      });
+
+      waterTimer = setInterval(function() {
+        Crafty("Flooding Station").each(function() {
+          this.flood();
+        });
+      }, 2000);
+    }, 10000);
+
   });
 
   Crafty.scene("main");
