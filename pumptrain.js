@@ -2,20 +2,31 @@ window.onload = function() {
   WIDTH = 800;
   HEIGHT = 576;
 
-  SPRITE_WIDTH = SPRITE_HEIGHT = 32
+  SPRITE_WIDTH = SPRITE_HEIGHT = 32;
+
+  INITIAL_WATER_LEVEL = 9;
 
   Crafty.init(WIDTH, HEIGHT);
   Crafty.canvas.init();
 
   Crafty.sprite(SPRITE_WIDTH, "sprites.png", {
     train: [0, 0],
-    station: [1, 0]
+    station0: [1, 0],
+    station1: [2, 0],
+    station2: [3, 0],
+    station3: [4, 0],
+    station4: [5, 0],
+    station5: [6, 0],
+    station6: [7, 0],
+    station7: [8, 0],
+    station8: [9, 0],
+    station9: [10, 0]
   });
 
   Crafty.scene("main", function() {
     Crafty.c("Station", {
       init: function() {
-        this.waterLevel = 10;
+        this.waterLevel = INITIAL_WATER_LEVEL;
       },
       pump: function() {
         if (this.waterLevel > 0) {
@@ -25,7 +36,7 @@ window.onload = function() {
     });
 
     for (var i=0; i<3; i++) {
-      Crafty.e("2D, Canvas, Station, station")
+      Crafty.e("2D, Canvas, Station, station" + INITIAL_WATER_LEVEL)
         .attr({x: Crafty.math.randomInt(0, WIDTH - SPRITE_WIDTH),
                y: Crafty.math.randomInt(0, HEIGHT - SPRITE_HEIGHT)});
     }
