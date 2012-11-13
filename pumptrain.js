@@ -168,12 +168,58 @@ loadRain = function(){
       rainBuffer = buffer;
 
       // make two rain buffers to play and crossfade
-      this.rain1 = createSource(rainBuffer);
-      this.rain2 = createSource(rainBuffer);
+      //this.rain1 = createSource(rainBuffer);
+      //this.rain2 = createSource(rainBuffer);
 
       // play them
-      rain1.source.noteOn(0);
+      //rain1.source.noteOn(0);
       //rain2.source.noteOn(0);
+
+
+
+      playHelper(rainBuffer, rainBuffer);
+
+      function createSource(buffer) {
+        var source = context.createBufferSource();
+        var gainNode = context.createGainNode();
+        source.buffer = buffer;
+        // Connect source to gain.
+        source.connect(gainNode);
+        // Connect gain to destination.
+        gainNode.connect(context.destination);
+
+        return {
+          source: source,
+          gainNode: gainNode
+        };
+      }
+
+      function playHelper(bufferNow, bufferLater) {
+        var fadeTime = 10;
+        var playNow = createSource(bufferNow);
+        var source = playNow.source;
+        this.source = source;
+        var gainNode = playNow.gainNode;
+        var duration = bufferNow.duration;
+        var currTime = context.currentTime;
+        // Fade the playNow track in.
+        gainNode.gain.linearRampToValueAtTime(0, currTime);
+        gainNode.gain.linearRampToValueAtTime(1, currTime + fadeTime);
+        // Play the playNow track.
+        source.noteOn(0);
+        // At the end of the track, fade it out.
+        gainNode.gain.linearRampToValueAtTime(1, currTime + duration - fadeTime);
+        gainNode.gain.linearRampToValueAtTime(0, currTime + duration);
+        // Schedule a recursive track change with the tracks swapped.
+        var recurse = arguments.callee;
+        this.timer = setTimeout(function() {
+          recurse(bufferLater, bufferNow);
+        }, (duration - fadeTime) * 1000);
+      }
+
+
+
+
     });
   }
 
@@ -181,22 +227,22 @@ loadRain = function(){
 }
 
 // create a sound source and gain node
-function createSource(buffer) {
-  var source = context.createBufferSource();
-  var gainNode = context.createGainNode();
-  source.buffer = buffer;
-  source.connect(gainNode);
-  gainNode.connect(context.destination);
-  return {
-    source: source,
-    gainNode: gainNode
-  };
-}
+//function createSource(buffer) {
+  //var source = context.createBufferSource();
+  //var gainNode = context.createGainNode();
+  //source.buffer = buffer;
+  //source.connect(gainNode);
+  //gainNode.connect(context.destination);
+  //return {
+    //source: source,
+    //gainNode: gainNode
+  //};
+//}
 
 // take a value from 0-1
-crossfadeRain = function(amount){
-  var gain1 = Math.cos(amount * 0.5 * Math.PI);
-  var gain2 = Math.cos((1.0 - amount) * 0.5 * Math.PI);
-  this.rain1.gainNode.gain.value = gain1;
-  this.rain2.gainNode.gain.value = gain2;
-};
+//crossfadeRain = function(amount){
+  //var gain1 = Math.cos(amount * 0.5 * Math.PI);
+  //var gain2 = Math.cos((1.0 - amount) * 0.5 * Math.PI);
+  //this.rain1.gainNode.gain.value = gain1;
+  //this.rain2.gainNode.gain.value = gain2;
+//};
