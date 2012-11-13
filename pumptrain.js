@@ -1,4 +1,6 @@
 window.onload = function() {
+  sound();
+
   WIDTH = 800;
   HEIGHT = 576;
 
@@ -132,3 +134,69 @@ window.onload = function() {
 
   Crafty.scene("main");
 }
+
+
+//
+// sound effects from here on down
+//
+
+var context;
+sound = function(){
+  try {
+    context = new webkitAudioContext();
+  }
+  catch(e) {
+    console.log('Web Audio API is not supported in this browser');
+  }
+
+  // if web audio is supported, continue
+  if (context) {
+    loadRain();
+  }
+}
+
+loadRain = function(){
+  var request = new XMLHttpRequest();
+  var rainBuffer = null;
+
+  request.open('GET', 'sound/rain.mp3', true);
+  request.responseType = 'arraybuffer';
+
+  // Decode asynchronously
+  request.onload = function() {
+    context.decodeAudioData(request.response, function(buffer) {
+      rainBuffer = buffer;
+
+      // make two rain buffers to play and crossfade
+      this.rain1 = createSource(rainBuffer);
+      this.rain2 = createSource(rainBuffer);
+
+      // play them
+      rain1.source.noteOn(0);
+      //rain2.source.noteOn(0);
+    });
+  }
+
+  request.send();
+}
+
+// create a sound source and gain node
+function createSource(buffer) {
+  var source = context.createBufferSource();
+  var gainNode = context.createGainNode();
+  source.buffer = buffer;
+  source.connect(gainNode);
+  gainNode.connect(context.destination);
+  return {
+    source: source,
+    gainNode: gainNode
+  };
+}
+
+// take a value from 0-1
+crossfadeRain = function(amount){
+  var gain1 = Math.cos(amount * 0.5 * Math.PI);
+  var gain2 = Math.cos((1.0 - amount) * 0.5 * Math.PI);
+  this.rain1.gainNode.gain.value = gain1;
+  this.rain2.gainNode.gain.value = gain2;
+};
