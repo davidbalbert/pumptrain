@@ -8,11 +8,9 @@ body.lightening{
 
 h1{
   color: #f00;
-  display: none;
 }
 
 #cr-stage{
-  display: none;
   background-color: black;
   border: 1px solid white;
 }
