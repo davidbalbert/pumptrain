@@ -153,9 +153,12 @@ sound = function(){
   if (context) {
     loadRain();
     loadThunder();
+    randomizeThunder();
   }
 }
 
+// start an infinite loop of two instances of the same rain sample
+// which crossfade between each other at the end
 loadRain = function(){
   var request = new XMLHttpRequest();
   var rainBuffer = null;
@@ -214,25 +217,97 @@ loadRain = function(){
   request.send();
 }
 
+// initialize coffeescript style this
+// and thunder samples in this scope
+var _this = this;
+this.thunder1 = null;
+this.thunder2 = null;
+this.thunder3 = null;
+this.thunder4 = null;
+
+// load in 4 thunder samples
+// don't hate me, but I can't figure out how not to repeat
+// the below loader code :(
 loadThunder = function(){
-  var request = new XMLHttpRequest();
-  var thunder1 = null;
-
-  request.open('GET', 'sound/thunder1.mp3', true);
-  request.responseType = 'arraybuffer';
-
-  // Decode asynchronously
-  request.onload = function() {
-    context.decodeAudioData(request.response, function(buffer) {
-      thunder1 = createSource(buffer);
+  var request1 = new XMLHttpRequest();
+  request1.open('GET', 'sound/thunder1.mp3', true);
+  request1.responseType = 'arraybuffer';
+  request1.onload = function() {
+    context.decodeAudioData(request1.response, function(buffer) {
+      _this.thunder1 = createSource(buffer);
     })
   }
+  request1.send();
 
-  request.send();
+  var request2 = new XMLHttpRequest();
+  request2.open('GET', 'sound/thunder1.mp3', true);
+  request2.responseType = 'arraybuffer';
+  request2.onload = function() {
+    context.decodeAudioData(request2.response, function(buffer) {
+      _this.thunder2 = createSource(buffer);
+    })
+  }
+  request2.send();
 
+  var request3 = new XMLHttpRequest();
+  request3.open('GET', 'sound/thunder1.mp3', true);
+  request3.responseType = 'arraybuffer';
+  request3.onload = function() {
+    context.decodeAudioData(request3.response, function(buffer) {
+      _this.thunder3 = createSource(buffer);
+    })
+  }
+  request3.send();
+
+  var request4 = new XMLHttpRequest();
+  request4.open('GET', 'sound/thunder1.mp3', true);
+  request4.responseType = 'arraybuffer';
+  request4.onload = function() {
+    context.decodeAudioData(request4.response, function(buffer) {
+      _this.thunder4 = createSource(buffer);
+    })
+  }
+  request4.send();
+}
+
+// a recursive call to trigger a random thunder sample
+// every once in a while
+randomizeThunder = function(){
+  // pick a random number between 10000 and 30000 (10-30 seconds)
+  wait = Math.ceil(Math.random() * 20000) + 10000;
   setTimeout(function(){
-    thunder1.source.noteOn(0);
-  }, 15000)
+    playRandomThunder();
+    randomizeThunder();
+  }, wait);
+}
+
+// trigger a note on for one of the samples
+// add and remove the class "lightening" to the body
+// a random number of times
+playRandomThunder = function(){
+  // stick all of the currently loaded thunders into an array
+  thunderArray = [];
+  if (this.thunder1) {
+    thunderArray.push(this.thunder1);
+  }
+  if (this.thunder2) {
+    thunderArray.push(this.thunder2);
+  }
+  if (this.thunder3) {
+    thunderArray.push(this.thunder3);
+  }
+  if (this.thunder4) {
+    thunderArray.push(this.thunder4);
+  }
+
+  // proceed if any are loaded
+  if (thunderArray.length > 0){
+    // trigger a random sound using the length of the
+    // array of loaded sounds
+    rand = Math.floor(Math.random() * thunderArray.length);
+    console.log('playing thunder sample ' + rand);
+    thunderArray[rand].source.noteOn(0);
+  }
 }
 
 // create a sound source and gain node
