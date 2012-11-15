@@ -240,7 +240,7 @@ loadThunder = function(){
   request1.send();
 
   var request2 = new XMLHttpRequest();
-  request2.open('GET', 'sound/thunder1.mp3', true);
+  request2.open('GET', 'sound/thunder2.mp3', true);
   request2.responseType = 'arraybuffer';
   request2.onload = function() {
     context.decodeAudioData(request2.response, function(buffer) {
@@ -250,7 +250,7 @@ loadThunder = function(){
   request2.send();
 
   var request3 = new XMLHttpRequest();
-  request3.open('GET', 'sound/thunder1.mp3', true);
+  request3.open('GET', 'sound/thunder3.mp3', true);
   request3.responseType = 'arraybuffer';
   request3.onload = function() {
     context.decodeAudioData(request3.response, function(buffer) {
@@ -260,7 +260,7 @@ loadThunder = function(){
   request3.send();
 
   var request4 = new XMLHttpRequest();
-  request4.open('GET', 'sound/thunder1.mp3', true);
+  request4.open('GET', 'sound/thunder4.mp3', true);
   request4.responseType = 'arraybuffer';
   request4.onload = function() {
     context.decodeAudioData(request4.response, function(buffer) {
