@@ -307,7 +307,45 @@ playRandomThunder = function(){
     rand = Math.floor(Math.random() * thunderArray.length);
     console.log('playing thunder sample ' + rand);
     thunderArray[rand].source.noteOn(0);
+
+    lightening();
   }
+}
+
+// add and remove the class lightening to the body
+// a random number of times with a random interval
+lightening = function(){
+  var numberOfFlashes = Math.ceil(Math.random() * 3);
+  var delays = [Math.ceil(Math.random() * 400), Math.ceil(Math.random() * 400)];
+
+  // initial flash
+  flash();
+
+  for (i = 0; i < numberOfFlashes; i++) {
+    switch (i) {
+      case 1:
+        delay = delays[0];
+        break;
+      case 2:
+        delay = delays[0] + delays[1];
+        break;
+      default:
+        delay = 0;
+    }
+
+    setTimeout(function(){
+      flash();
+    }, delay);
+  }
+}
+
+flash = function(){
+  var body = document.getElementById('body');
+
+  body.className = 'lightening';
+  setTimeout(function(){
+    body.className = '';
+  }, 100);
 }
 
 // create a sound source and gain node
