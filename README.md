@@ -4,6 +4,8 @@ You are the most heroic of MTA workers &ndash; the driver of the Pump Train. In
 the aftermath of the hurricane, subway stations are slowly flooding... don't
 let them overflow!
 
+[Play Pump Train](http://www.pumptrain.com)
+
 **Pump Train** was made by Nicholas Bergson-Shilcock, David Albert, and
 Michael Geraci for [Issue #85](http://www.linkedlistnyc.org/archive/issue_085.html) of [LinkedList NYC](http://www.linkedlistnyc.org).
 
