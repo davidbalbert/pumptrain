@@ -1,6 +1,10 @@
-window.onkeydown = function(e){
-  e.preventDefault();
-}
+window.onkeydown = function(e) {
+  // Ignore space bar and arrow keys
+  if (e.keyCode == 32 || e.keyCode == 37 || e.keyCode == 38 ||
+      e.keyCode == 39 || e.keyCode == 40) {
+    e.preventDefault();
+  }
+};
 
 window.onload = function() {
   sound();
