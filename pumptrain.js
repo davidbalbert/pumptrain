@@ -61,9 +61,6 @@ window.onload = function() {
 
         // Game over
         if (this.waterLevel == 9) {
-          clearInterval(pumpTimer);
-          pumpTimer = null;
-
           clearInterval(waterTimer);
           waterTimer = null;
 
