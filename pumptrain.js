@@ -55,15 +55,17 @@ window.onload = function() {
       }
     }, 1000);
 
-    Crafty.bind("KeyDown", function(e) {
+    var spaceToStart = function(e) {
       // spacebar
       if (e.keyCode == 32) {
         clearInterval(blinkTimer);
         blinkTimer = null;
 
-        Crafty.scene("main")
+        Crafty.unbind("KeyDown", spaceToStart);
+        Crafty.scene("main");
       }
-    });
+    };
+    Crafty.bind("KeyDown", spaceToStart);
   });
 
   Crafty.scene("main", function() {
