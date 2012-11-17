@@ -214,11 +214,9 @@ window.onload = function() {
     var background2 = Crafty.e("2D, DOM, Image").attr({x: 0, y: 0}).image("images/game-over-background-2.png");
     var background1 = Crafty.e("2D, DOM, Image").attr({x: 0, y: 0}).image("images/game-over-background-1.png");
 
-    window.bg2 = background2;
-
-
-    var water = Crafty.e('2D, DOM, Image').attr({x: 0, y: HEIGHT}).image('images/game-over-water.png');
+    var water = Crafty.e('2D, DOM, Image').attr({x: 0, y: HEIGHT, z: 5}).image('images/game-over-water.png');
     var gameOverWaterLevel = HEIGHT;
+    var gameOverTrain;
 
     moveWater = function(direction, delta) {
       if (direction == 'up') {
@@ -231,12 +229,14 @@ window.onload = function() {
     };
 
     var waterDirection = 'up';
-    var rotateTrainInterval = null;
+    var bobTrainInterval = null;
+    var gameOverTrainHeight = HEIGHT * 0.33
     var gameOverInterval = setInterval(function() {
       if (waterDirection == 'up') {
         moveWater(waterDirection, 8);
 
         if (gameOverWaterLevel <= 0) {
+          gameOverTrain = Crafty.e('2D, DOM, Image').attr({x: WIDTH * 0.28, y: gameOverTrainHeight, z: 4}).image('images/game-over-train.png');
           background1.visible = false;
           waterDirection = 'down';
         }
@@ -247,27 +247,27 @@ window.onload = function() {
           clearInterval(gameOverInterval);
           gameOverInterval = null;
 
-          var rotation = 0;
-          var direction = "right";
-          rotateTrainInterval = setInterval(function() {
-            var delta = 1;
-            var limit = 1;
-            if (direction == "right") {
-              if (rotation == limit) {
-                direction = "left";
-                rotation -= delta;
+          var bobHeight = 0;
+          var direction = "up";
+          bobTrainInterval = setInterval(function() {
+            var delta = 8;
+            var limit = 8;
+            if (direction == "up") {
+              if (bobHeight == limit) {
+                direction = "down";
+                bobHeight -= delta;
               } else {
-                rotation += delta;
+                bobHeight += delta;
               }
             } else {
-              if (rotation <= -limit) {
-                direction = "right";
-                rotation += delta;
+              if (bobHeight <= -limit) {
+                direction = "up";
+                bobHeight += delta;
               } else {
-                rotation -= delta;
+                bobHeight -= delta;
               }
             }
-            background2.rotation = rotation;
+            gameOverTrain.attr({y: bobHeight + gameOverTrainHeight});
           }, 1000);
         }
       }
@@ -285,9 +285,9 @@ window.onload = function() {
             clearInterval(gameOverInterval);
             gameOverInterval = null;
           }
-          if (rotateTrainInterval) {
-            clearInterval(rotateTrainInterval);
-            rotateTrainInterval = null;
+          if (bobTrainInterval) {
+            clearInterval(bobTrainInterval);
+            bobTrainInterval = null;
           }
           Crafty.scene("main");
         }
