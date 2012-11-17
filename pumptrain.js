@@ -41,7 +41,7 @@ window.onload = function() {
   });
 
   Crafty.scene("main", function() {
-    //Crafty.e('2D, DOM, Image').image('images/map.png'); // load background image
+    Crafty.background("url('images/map.png')");
 
     Crafty.c("Station", {
       init: function() {
