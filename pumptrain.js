@@ -40,8 +40,8 @@ window.onload = function() {
   Crafty.sprite(SPRITE_WIDTH, "images/sprite.png", spriteCoords);
 
   Crafty.scene("title", function() {
-    var title1 = Crafty.e("2D, DOM, Image").attr({x: 0, y: 0}).image("images/tmptitle1.png");
-    var title2 = Crafty.e("2D, DOM, Image").attr({x: 0, y: 0}).image("images/tmptitle2.png");
+    var title1 = Crafty.e("2D, DOM, Image").attr({x: 0, y: 0}).image("images/start-screen-0.png");
+    var title2 = Crafty.e("2D, DOM, Image").attr({x: 0, y: 0}).image("images/start-screen-1.png");
     title1.visible = true;
     title2.visible = false;
 
@@ -106,7 +106,6 @@ window.onload = function() {
                y: Crafty.math.randomInt(0, HEIGHT - SPRITE_HEIGHT)});
     }
 
-    _this = this;
     Crafty.e("2D, Canvas, trainDownRight, Multiway, Collision")
       .attr({x: Crafty.math.randomInt(0, WIDTH - SPRITE_WIDTH),
              y: Crafty.math.randomInt(0, HEIGHT - SPRITE_HEIGHT)})
@@ -146,7 +145,7 @@ window.onload = function() {
       .bind("KeyDown", function(e) {
         if (e.key == Crafty.keys['SPACE'] && this.currentStation != null) {
           this.currentStation.pump();
-          createSource(_this.glug).source.noteOn(0);
+          playSound(soundBuffers.glug);
         }
       })
       .onHit("Station", function(entities) {
@@ -179,6 +178,7 @@ window.onload = function() {
   });
 
   Crafty.scene("gameover", function() {
+    Crafty.background("black");
     Crafty.e("2D, DOM, Text")
       .attr({x: 150, y: 200, w: 500, h: 100})
       .text("Game Over :(")
@@ -191,16 +191,19 @@ window.onload = function() {
       .textFont({family: "Arial", size: '30px', weight: 'bold'})
       .textColor("#FF0000");
 
-      // TODO: We probably want to wait a second or two before binding the
-      // keydown. Otherwise people are going to miss the game over screen
-      var startOver = function(e) {
-        // spacebar
-        if (e.keyCode == 32) {
-          Crafty.unbind("KeyDown", startOver);
-          Crafty.scene("main");
-        }
-      };
-      Crafty.bind("KeyDown", startOver);
+      // Wait for a second before registering the keypress event. This is to
+      // make sure the player doesn't skip over the game over screen by pumping
+      // right when the game ends
+      setTimeout(function() {
+        var startOver = function(e) {
+          // spacebar
+          if (e.keyCode == 32) {
+            Crafty.unbind("KeyDown", startOver);
+            Crafty.scene("main");
+          }
+        };
+        Crafty.bind("KeyDown", startOver);
+      }, 1000);
   });
 
   Crafty.scene("title");
@@ -231,169 +234,99 @@ sound = function(){
 
 // start an infinite loop of two instances of the same rain sample
 // which crossfade between each other at the end
-loadRain = function(){
-  var request = new XMLHttpRequest();
-  var rainBuffer = null;
-
-  request.open('GET', 'sound/rain.mp3', true);
-  request.responseType = 'arraybuffer';
-
+loadRain = function() {
   // Decode asynchronously
-  request.onload = function() {
-    context.decodeAudioData(request.response, function(buffer) {
-      rainBuffer = buffer;
+  var callback = function(buffer) {
+    soundBuffers.rain = buffer;
 
-      playHelper(rainBuffer, rainBuffer);
+    playHelper(buffer, buffer);
 
-      function createSource(buffer) {
-        var source = context.createBufferSource();
-        var gainNode = context.createGainNode();
-        source.buffer = buffer;
-        // Connect source to gain.
-        source.connect(gainNode);
-        // Connect gain to destination.
-        gainNode.connect(context.destination);
+    // create a two buffers to switch between
+    function playHelper(bufferNow, bufferLater) {
+      var fadeTime = 10;
+      var playNow = createSource(bufferNow);
+      var source = playNow.source;
+      this.source = source;
+      var gainNode = playNow.gainNode;
+      var duration = bufferNow.duration;
+      var currTime = context.currentTime;
+      // Fade the playNow track in.
+      gainNode.gain.linearRampToValueAtTime(0, currTime);
+      gainNode.gain.linearRampToValueAtTime(1, currTime + fadeTime);
+      // Play the playNow track.
+      source.noteOn(0);
+      // At the end of the track, fade it out.
+      gainNode.gain.linearRampToValueAtTime(1, currTime + duration - fadeTime);
+      gainNode.gain.linearRampToValueAtTime(0, currTime + duration);
+      // Schedule a recursive track change with the tracks swapped.
+      var recurse = arguments.callee;
+      this.timer = setTimeout(function() {
+        recurse(bufferLater, bufferNow);
+      }, (duration - fadeTime) * 1000);
+    }
+  }
 
-        return {
-          source: source,
-          gainNode: gainNode
-        };
-      }
+  loadSoundFile('rain.mp3', callback);
+}
 
-      // create a two buffers to switch between
-      function playHelper(bufferNow, bufferLater) {
-        var fadeTime = 10;
-        var playNow = createSource(bufferNow);
-        var source = playNow.source;
-        this.source = source;
-        var gainNode = playNow.gainNode;
-        var duration = bufferNow.duration;
-        var currTime = context.currentTime;
-        // Fade the playNow track in.
-        gainNode.gain.linearRampToValueAtTime(0, currTime);
-        gainNode.gain.linearRampToValueAtTime(1, currTime + fadeTime);
-        // Play the playNow track.
-        source.noteOn(0);
-        // At the end of the track, fade it out.
-        gainNode.gain.linearRampToValueAtTime(1, currTime + duration - fadeTime);
-        gainNode.gain.linearRampToValueAtTime(0, currTime + duration);
-        // Schedule a recursive track change with the tracks swapped.
-        var recurse = arguments.callee;
-        this.timer = setTimeout(function() {
-          recurse(bufferLater, bufferNow);
-        }, (duration - fadeTime) * 1000);
-      }
+var soundBuffers = {
+  thunder: [],
+  glug: null,
+  rain: null
+};
+
+loadGlug = function() {
+  loadSoundFile('glug.mp3', function(buffer) {
+    soundBuffers.glug = buffer;
+  })
+}
+
+loadThunder = function() {
+  var thunderSounds = ["thunder1.mp3", "thunder2.mp3", "thunder3.mp3",
+      "thunder4.mp3"];
+
+  for (var i=0; i< thunderSounds.length; i++) {
+    loadSoundFile(thunderSounds[i], function(buffer) {
+      soundBuffers.thunder.push(buffer);
     });
   }
+}
 
+playSound = function(buffer) {
+  createSource(buffer).source.noteOn(0);
+};
+
+loadSoundFile = function(filename, callback) {
+  var request = new XMLHttpRequest();
+  request.open('GET', 'sound/' + filename, true);
+  request.responseType = 'arraybuffer';
+  request.onload = function() {
+    context.decodeAudioData(request.response, callback);
+  }
   request.send();
-}
-
-// initialize coffeescript style this
-// and thunder samples in this scope
-var _this = this;
-this.thunder1 = null;
-this.thunder2 = null;
-this.thunder3 = null;
-this.thunder4 = null;
-this.glug = null;
-
-loadGlug = function(){
-  var request1 = new XMLHttpRequest();
-  request1.open('GET', 'sound/glug.mp3', true);
-  request1.responseType = 'arraybuffer';
-  request1.onload = function() {
-    context.decodeAudioData(request1.response, function(buffer) {
-      _this.glug = buffer;
-    })
-  }
-  request1.send();
-}
-
-// load in 4 thunder samples as buffers
-// don't hate me, but I can't figure out how not to repeat
-// the below loader code :(
-loadThunder = function(){
-  var request1 = new XMLHttpRequest();
-  request1.open('GET', 'sound/thunder1.mp3', true);
-  request1.responseType = 'arraybuffer';
-  request1.onload = function() {
-    context.decodeAudioData(request1.response, function(buffer) {
-      _this.thunder1 = buffer;
-    })
-  }
-  request1.send();
-
-  var request2 = new XMLHttpRequest();
-  request2.open('GET', 'sound/thunder2.mp3', true);
-  request2.responseType = 'arraybuffer';
-  request2.onload = function() {
-    context.decodeAudioData(request2.response, function(buffer) {
-      _this.thunder2 = buffer;
-    })
-  }
-  request2.send();
-
-  var request3 = new XMLHttpRequest();
-  request3.open('GET', 'sound/thunder3.mp3', true);
-  request3.responseType = 'arraybuffer';
-  request3.onload = function() {
-    context.decodeAudioData(request3.response, function(buffer) {
-      _this.thunder3 = buffer;
-    })
-  }
-  request3.send();
-
-  var request4 = new XMLHttpRequest();
-  request4.open('GET', 'sound/thunder4.mp3', true);
-  request4.responseType = 'arraybuffer';
-  request4.onload = function() {
-    context.decodeAudioData(request4.response, function(buffer) {
-      _this.thunder4 = buffer;
-    })
-  }
-  request4.send();
 }
 
 // a recursive call to trigger a random thunder sample
 // every once in a while
-randomizeThunder = function(){
-  // pick a random number between 10000 and 30000 (10-30 seconds)
-  wait = Math.ceil(Math.random() * 20000) + 10000;
+randomizeThunder = function() {
+  // wait between 10 and 25 sec
+  var wait = Math.ceil(Math.random() * 10000) + 15000;
 
-  setTimeout(function(){
+  setTimeout(function() {
     playRandomThunder();
     randomizeThunder();
   }, wait);
 }
 
-// trigger a note on for one of the samples
+// trigger a noteOn for one of the samples
 // add and remove the class "lightening" to the body
 // a random number of times
-playRandomThunder = function(){
-  // stick all of the currently loaded thunders into an array
-  thunderArray = [];
-  if (this.thunder1) {
-    thunderArray.push(this.thunder1);
-  }
-  if (this.thunder2) {
-    thunderArray.push(this.thunder2);
-  }
-  if (this.thunder3) {
-    thunderArray.push(this.thunder3);
-  }
-  if (this.thunder4) {
-    thunderArray.push(this.thunder4);
-  }
+playRandomThunder = function() {
+  var buffers = soundBuffers.thunder;
+  if (buffers.length) {
+    var rand = Math.floor(Math.random() * buffers.length);
 
-  // proceed if any are loaded
-  if (thunderArray.length > 0){
-    // trigger a random sound using the length of the
-    // array of loaded sounds
-    rand = Math.floor(Math.random() * thunderArray.length);
-
-    // play the random one, creating a new sourcenode
-    createSource(thunderArray[rand]).source.noteOn(0);
+    playSound(buffers[rand]);
 
     // trigger randomized flashes
     lightening();
@@ -405,12 +338,12 @@ playRandomThunder = function(){
 lightening = function(){
   var numberOfFlashes = Math.ceil(Math.random() * 3);
   var delays = [Math.ceil(Math.random() * 400), Math.ceil(Math.random() * 400)];
+  var delay;
 
-  // initial flash
   flash();
 
   // add the delays together if necessary for the second and third flashes
-  for (i = 0; i < numberOfFlashes; i++) {
+  for (var i = 0; i < numberOfFlashes; i++) {
     switch (i) {
       case 1:
         delay = delays[0];
@@ -422,17 +355,17 @@ lightening = function(){
         delay = 0;
     }
 
-    setTimeout(function(){
+    setTimeout(function() {
       flash();
     }, delay);
   }
 }
 
-flash = function(){
+flash = function() {
   var body = document.getElementById('body');
 
   body.className = 'lightening';
-  setTimeout(function(){
+  setTimeout(function() {
     body.className = '';
   }, 100);
 }
