@@ -51,7 +51,7 @@ window.onload = function() {
     title1.visible = true;
     title2.visible = false;
 
-    var blinkTimer = setInterval(function() {
+    var playAgainInterval = setInterval(function() {
       if (title1.visible) {
         title1.visible = false;
         title2.visible = true;
@@ -64,8 +64,8 @@ window.onload = function() {
     var spaceToStart = function(e) {
       // spacebar
       if (e.keyCode == 32) {
-        clearInterval(blinkTimer);
-        blinkTimer = null;
+        clearInterval(playAgainInterval);
+        playAgainInterval = null;
         playSound(soundBuffers.dingdong);
 
         Crafty.unbind("KeyDown", spaceToStart);
@@ -226,6 +226,7 @@ window.onload = function() {
       water.attr({y: gameOverWaterLevel});
     };
 
+    var playAgainInterval;
     var waterDirection = 'up';
     var gameOverInterval = setInterval(function() {
       if (waterDirection == 'up') {
@@ -242,7 +243,29 @@ window.onload = function() {
           clearInterval(gameOverInterval);
           gameOverInterval = null;
 
-          var scoreText = Crafty.e('2D, DOM, Image').attr({x: 0, y: HEIGHT * 0.7}).image('images/score-text.png');
+          // score label
+          setTimeout(function(){
+            var scoreText = Crafty.e('2D, DOM, Image').attr({x: WIDTH * 0.05, y: HEIGHT * 0.56}).image('images/score-text.png');
+          }, 500);
+
+          // score
+          setTimeout(function(){
+            // dave work here
+          }, 1000);
+
+          // play again
+          setTimeout(function(){
+            var playAgainPosition =  HEIGHT * 0.86
+            var playAgain = Crafty.e('2D, DOM, Image').attr({x: WIDTH * 0.2, y: playAgainPosition}).image('images/play-again.png');
+
+            playAgainInterval = setInterval(function() {
+              if (playAgain._y > HEIGHT) {
+                playAgain.attr({y: playAgainPosition});
+              } else {
+                playAgain.attr({y: HEIGHT * 2});
+              }
+            }, 1000);
+          }, 1500);
         }
       }
     }, 25);
@@ -258,6 +281,10 @@ window.onload = function() {
           if (gameOverInterval) {
             clearInterval(gameOverInterval);
             gameOverInterval = null;
+          }
+          if (playAgainInterval) {
+            clearInterval(playAgainInterval);
+            playAgainInterval = null;
           }
           Crafty.scene("main");
         }
