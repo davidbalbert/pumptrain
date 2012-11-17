@@ -133,10 +133,20 @@ window.onload = function() {
       }
     });
 
-    for (var i=0; i<3; i++) {
+    var stations = {
+      "fourteenthSt": {x: 80, y: 43},
+      "firstAve": {x: 370, y: 45},
+      "bedfordAve": {x: 522, y: 45},
+      "delancySt": {x: 386, y: 243},
+      "marcyAve": {x: 597, y: 243},
+      "southFerry": {x: 246, y: 484},
+      "wallSt": {x: 324, y: 411},
+      "clarkSt": {x: 516, y: 366}
+    }
+
+    for (var stationName in stations) {
       Crafty.e("2D, Canvas, Station, station" + INITIAL_WATER_LEVEL)
-        .attr({x: Crafty.math.randomInt(0, WIDTH - SPRITE_WIDTH),
-               y: Crafty.math.randomInt(0, HEIGHT - SPRITE_HEIGHT)});
+        .attr(stations[stationName]);
     }
 
     Crafty.e("2D, Canvas, trainDownRight, Multiway, Collision")
@@ -326,8 +336,7 @@ window.onload = function() {
     }, 1000);
   });
 
-  //Crafty.scene("title");
-  Crafty.scene("gameover");
+  Crafty.scene("title");
 };
 
 
