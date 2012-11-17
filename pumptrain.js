@@ -59,6 +59,18 @@ window.onload = function() {
       .attr({x: Crafty.math.randomInt(0, WIDTH - SPRITE_WIDTH),
              y: Crafty.math.randomInt(0, HEIGHT - SPRITE_HEIGHT)})
       .multiway(4, {UP_ARROW: -90, DOWN_ARROW: 90, RIGHT_ARROW: 0, LEFT_ARROW: 180})
+      .bind("NewDirection", function(direction) {
+        if (direction.x < 0) { // left
+          this.sprite(6, 0, 1, 1);
+        } else if (direction.x > 0) { // right
+          this.sprite(2, 0, 1, 1);
+        } else if (direction.y < 0) { //up
+          this.sprite(0, 0, 1, 1);
+        } else if (direction.y > 0) { // down
+          this.sprite(4, 0, 1, 1);
+        }
+
+      })
       .bind("Moved", function(oldPosition) {
         if (this.x < 0) {
           this.x = 0;
