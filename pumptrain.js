@@ -64,8 +64,9 @@ window.onload = function() {
     var s = number.toString();
     var e;
     for (var i = 0; i < s.length; i++) {
-      e = Crafty.e("2D, Canvas, n" + s[i])
-          .attr({x: x + i * NUMBER_WIDTH, y: y});
+      e = Crafty.e("2D, DOM, n" + s[i])
+          .attr({x: x + i * NUMBER_WIDTH, y: y})
+          .css("z-index", "9999");
       numbers.push(e);
     }
 
@@ -275,7 +276,9 @@ window.onload = function() {
     var playAgainInterval;
     var waterDirection = 'up';
     var bobTrainInterval = null;
-    var gameOverTrainHeight = HEIGHT * 0.33
+    var gameOverTrainHeight = HEIGHT * 0.33;
+    var yourScoreElements = [];
+    var highScoreElements = [];
     var gameOverInterval = setInterval(function() {
       if (waterDirection == 'up') {
         moveWater(waterDirection, 8);
@@ -318,6 +321,10 @@ window.onload = function() {
           // score label
           setTimeout(function(){
             var scoreText = Crafty.e('2D, DOM, Image').attr({x: WIDTH * 0.05, y: HEIGHT * 0.56, z: 6}).image('images/score-text.png');
+            yourScoreElements = drawNumber(gallonsPumped, WIDTH * 0.05, 370);
+            var highScore = parseInt(localStorage.getItem("highScore") || 0);
+
+            highScoreElements = drawNumber(highScore, 522, 370);
           }, 500);
 
           // score
@@ -362,6 +369,9 @@ window.onload = function() {
             clearInterval(playAgainInterval);
             playAgainInterval = null;
           }
+
+          clearNumber(yourScoreElements);
+          clearNumber(highScoreElements);
           Crafty.scene("main");
           playSound(soundBuffers.dingdong);
         }
