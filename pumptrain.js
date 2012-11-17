@@ -11,6 +11,7 @@ window.onload = function() {
   var HEIGHT = 576;
   var SPRITE_WIDTH = SPRITE_HEIGHT = 53;
   var INITIAL_WATER_LEVEL = 2;
+  var MAX_WATER_LEVEL = 9;
   var spriteCoords = {
     trainUp:        [0, 0, 1, 1],
     trainUpRight:   [1, 0, 1, 1],
@@ -31,6 +32,7 @@ window.onload = function() {
     station8:       [8, 1, 1, 1],
     station9:       [9, 1, 1, 1]
   };
+  var gallonsPumped;
 
   Crafty.init(WIDTH, HEIGHT);
   Crafty.canvas.init();
@@ -71,29 +73,55 @@ window.onload = function() {
   Crafty.scene("main", function() {
     Crafty.background("url('images/map.png')");
 
+    gallonsPumped = 0;
+
+    var scoreText = Crafty.e("2D, DOM, Text")
+      .attr({x: WIDTH - 100, y: 0, w: 100, h: 100})
+      .textFont({family: "Arial", size: '12px'})
+      .textColor("#FF0000");
+
+    updateScoreText();
+
+    function updateScoreText() {
+      scoreText.text("Gallons: " + gallonsPumped);
+    }
+
     Crafty.c("Station", {
       init: function() {
         this.waterLevel = INITIAL_WATER_LEVEL;
       },
       _changeWaterLevel: function(delta) {
-        if (this.waterLevel > 0 && delta === -1 || this.waterLevel < 9 && delta === 1) {
+        if (this.waterLevel > 0 && delta === -1 || this.waterLevel < MAX_WATER_LEVEL && delta === 1) {
           this.waterLevel += delta;
           this.sprite(this.waterLevel, 1, 1, 1);
+          return true;
         }
+        return false;
       },
       pump: function() {
-        this._changeWaterLevel(-1);
+        if (this._changeWaterLevel(-1)) {
+          gallonsPumped += Crafty.math.randomInt(900, 1100);
+          updateScoreText();
+        }
       },
       flood: function() {
         this._changeWaterLevel(1);
 
         // Game over
-        if (this.waterLevel == 9) {
+        if (this.waterLevel == MAX_WATER_LEVEL) {
           clearInterval(waterTimer);
           waterTimer = null;
 
           clearInterval(stationsSelectTimer);
           stationsSelectTimer = null;
+
+          if (window.localStorage) {
+            var highScore = parseInt(localStorage.getItem("highScore") || 0);
+            if (gallonsPumped > highScore) {
+              highScore = gallonsPumped;
+            }
+            localStorage.setItem("highScore", highScore);
+          }
 
           Crafty.scene("gameover");
         }
@@ -181,7 +209,7 @@ window.onload = function() {
     Crafty.background("black");
     Crafty.e("2D, DOM, Text")
       .attr({x: 150, y: 200, w: 500, h: 100})
-      .text("Game Over :(")
+      .text("Game Over :( You pumped " + gallonsPumped + " gallons of water")
       .textFont({family: "Arial", size: '100px', weight: 'bold'})
       .textColor("#FF0000");
 
@@ -215,7 +243,7 @@ window.onload = function() {
 //
 
 var context;
-sound = function(){
+sound = function() {
   try {
     context = new webkitAudioContext();
   }
@@ -223,7 +251,6 @@ sound = function(){
     console.log('Web Audio API is not supported in this browser');
   }
 
-  // if web audio is supported, continue
   if (context) {
     loadGlug();
     loadRain();
@@ -335,7 +362,7 @@ playRandomThunder = function() {
 
 // add and remove the class lightening to the body
 // a random number of times with a random interval
-lightening = function(){
+lightening = function() {
   var numberOfFlashes = Math.ceil(Math.random() * 3);
   var delays = [Math.ceil(Math.random() * 400), Math.ceil(Math.random() * 400)];
   var delay;
