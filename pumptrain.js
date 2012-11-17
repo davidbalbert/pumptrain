@@ -221,7 +221,7 @@ window.onload = function() {
       .bind("KeyDown", function(e) {
         if (e.key == Crafty.keys['SPACE'] && this.currentStation != null) {
           this.currentStation.pump();
-          playSound(soundBuffers.glug);
+          playSound(soundBuffers.glug, 0.4);
         }
       })
       .onHit("Station", function(entities) {
@@ -471,9 +471,15 @@ loadThunder = function() {
   }
 }
 
-playSound = function(buffer) {
+playSound = function(buffer, volume) {
+  if (!volume) {
+    volume = 1;
+  }
+
   if (context) {
-    createSource(buffer).source.noteOn(0);
+    source = createSource(buffer);
+    source.gainNode.gain.value = volume;
+    source.source.noteOn(0);
   }
 };
 
