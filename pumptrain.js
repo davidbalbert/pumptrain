@@ -322,6 +322,9 @@ window.onload = function() {
           setTimeout(function(){
             var scoreText = Crafty.e('2D, DOM, Image').attr({x: WIDTH * 0.05, y: HEIGHT * 0.56, z: 6}).image('images/score-text.png');
             yourScoreElements = drawNumber(gallonsPumped, WIDTH * 0.05, 370);
+            var highScore = parseInt(localStorage.getItem("highScore") || 0);
+
+            highScoreElements = drawNumber(highScore, 522, 370);
           }, 500);
 
           // score
