@@ -9,24 +9,26 @@
   font-style: normal;
 }
 
-body{
+body {
   background: #000;
   font-family: '04b03'
 }
 
-body.lightening{
+body.lightening {
   background: #fff;
 }
 
-h1{
+h1 {
   color: #f00;
+  text-align: center;
 }
 
-h1.lightening{
+body.lightening h1 {
   color: #faa;
 }
 
-#cr-stage{
+#cr-stage {
   background-color: black;
   border: 1px solid white;
+  margin: 0 auto;
 }
