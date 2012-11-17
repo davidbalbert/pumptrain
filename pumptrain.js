@@ -1,3 +1,7 @@
+window.onkeydown = function(e){
+  e.preventDefault();
+}
+
 window.onload = function() {
   sound();
 
@@ -26,6 +30,8 @@ window.onload = function() {
   });
 
   Crafty.scene("main", function() {
+    //Crafty.e('2D, DOM, Image').image('images/map.png'); // load background image
+
     Crafty.c("Station", {
       init: function() {
         this.waterLevel = INITIAL_WATER_LEVEL;
