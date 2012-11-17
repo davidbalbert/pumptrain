@@ -82,8 +82,16 @@ window.onload = function() {
              y: Crafty.math.randomInt(0, HEIGHT - SPRITE_HEIGHT)})
       .multiway(4, {UP_ARROW: -90, DOWN_ARROW: 90, RIGHT_ARROW: 0, LEFT_ARROW: 180})
       .bind("NewDirection", function(direction) {
-        if (direction.x < 0) { // left
+        if (direction.x < 0 && direction.y < 0) { // up-left
+          this.sprite(7, 0, 1, 1);
+        } else if (direction.x < 0 && direction.y > 0) { // down-left
+          this.sprite(5, 0, 1, 1);
+        } else if (direction.x < 0) { // left
           this.sprite(6, 0, 1, 1);
+        } else if (direction.x > 0 && direction.y < 0) { // up-right
+          this.sprite(1, 0, 1, 1);
+        } else if (direction.x > 0 && direction.y > 0) { // down-right
+          this.sprite(3, 0, 1, 1);
         } else if (direction.x > 0) { // right
           this.sprite(2, 0, 1, 1);
         } else if (direction.y < 0) { //up
@@ -91,7 +99,6 @@ window.onload = function() {
         } else if (direction.y > 0) { // down
           this.sprite(4, 0, 1, 1);
         }
-
       })
       .bind("Moved", function(oldPosition) {
         if (this.x < 0) {
