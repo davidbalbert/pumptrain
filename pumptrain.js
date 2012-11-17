@@ -221,6 +221,7 @@ window.onload = function() {
   });
 
   Crafty.scene("gameover", function() {
+    playSound(soundBuffers.siren);
     var background2 = Crafty.e("2D, DOM, Image").attr({x: 0, y: 0}).image("images/game-over-background-2.png");
     var background1 = Crafty.e("2D, DOM, Image").attr({x: 0, y: 0}).image("images/game-over-background-1.png");
 
@@ -356,6 +357,7 @@ sound = function() {
   if (context) {
     loadDingDong();
     loadGlug();
+    loadSiren();
     loadRain();
     loadThunder();
     randomizeThunder();
@@ -403,7 +405,8 @@ var soundBuffers = {
   thunder: [],
   glug: null,
   rain: null,
-  dingdong: null
+  dingdong: null,
+  siren: null
 };
 
 loadDingDong = function() {
@@ -415,6 +418,12 @@ loadDingDong = function() {
 loadGlug = function() {
   loadSoundFile('glug.mp3', function(buffer) {
     soundBuffers.glug = buffer;
+  })
+}
+
+loadSiren = function() {
+  loadSoundFile('siren.mp3', function(buffer) {
+    soundBuffers.siren = buffer;
   })
 }
 
