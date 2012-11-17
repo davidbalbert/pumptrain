@@ -40,6 +40,33 @@ window.onload = function() {
     station9:       [9, 1]
   });
 
+  Crafty.scene("title", function() {
+    var title1 = Crafty.e("2D, DOM, Image").attr({x: 0, y: 0}).image("images/tmptitle1.png");
+    var title2 = Crafty.e("2D, DOM, Image").attr({x: 0, y: 0}).image("images/tmptitle2.png");
+    title1.visible = true;
+    title2.visible = false;
+
+    var blinkTimer = setInterval(function() {
+      if (title1.visible) {
+        title1.visible = false;
+        title2.visible = true;
+      } else {
+        title1.visible = true;
+        title2.visible = false;
+      }
+    }, 1000);
+
+    Crafty.bind("KeyDown", function(e) {
+      // spacebar
+      if (e.keyCode == 32) {
+        clearInterval(blinkTimer);
+        blinkTimer = null;
+
+        Crafty.scene("main")
+      }
+    });
+  });
+
   Crafty.scene("main", function() {
     //Crafty.e('2D, DOM, Image').image('images/map.png'); // load background image
 
@@ -155,12 +182,14 @@ window.onload = function() {
       .text("Tap the spacebar to play again")
       .textFont({family: "Arial", size: '30px', weight: 'bold'})
       .textColor("#FF0000")
+      // TODO: We probably want to wait a second or two before binding the
+      // keydown. Otherwise people are going to miss the game over screen
       .bind("KeyDown", function() {
         Crafty.scene("main");
       });
   });
 
-  Crafty.scene("main");
+  Crafty.scene("title");
 }
 
 
