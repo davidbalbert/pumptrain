@@ -19,26 +19,28 @@ window.onload = function() {
   Crafty.init(WIDTH, HEIGHT);
   Crafty.canvas.init();
 
-  Crafty.sprite(SPRITE_WIDTH, "images/sprite.png", {
-    trainUp:        [0, 0],
-    trainUpRight:   [1, 0],
-    trainRight:     [2, 0],
-    trainDownRight: [3, 0],
-    trainDown:      [4, 0],
-    trainDownLeft:  [5, 0],
-    trainLeft:      [6, 0],
-    trainUpLeft:    [7, 0],
-    station0:       [0, 1],
-    station1:       [1, 1],
-    station2:       [2, 1],
-    station3:       [3, 1],
-    station4:       [4, 1],
-    station5:       [5, 1],
-    station6:       [6, 1],
-    station7:       [7, 1],
-    station8:       [8, 1],
-    station9:       [9, 1]
-  });
+  var spriteCoords = {
+    trainUp:        [0, 0, 1, 1],
+    trainUpRight:   [1, 0, 1, 1],
+    trainRight:     [2, 0, 1, 1],
+    trainDownRight: [3, 0, 1, 1],
+    trainDown:      [4, 0, 1, 1],
+    trainDownLeft:  [5, 0, 1, 1],
+    trainLeft:      [6, 0, 1, 1],
+    trainUpLeft:    [7, 0, 1, 1],
+    station0:       [0, 1, 1, 1],
+    station1:       [1, 1, 1, 1],
+    station2:       [2, 1, 1, 1],
+    station3:       [3, 1, 1, 1],
+    station4:       [4, 1, 1, 1],
+    station5:       [5, 1, 1, 1],
+    station6:       [6, 1, 1, 1],
+    station7:       [7, 1, 1, 1],
+    station8:       [8, 1, 1, 1],
+    station9:       [9, 1, 1, 1]
+  };
+
+  Crafty.sprite(SPRITE_WIDTH, "images/sprite.png", spriteCoords);
 
   Crafty.scene("main", function() {
     Crafty.background("url('images/map.png')");
@@ -84,22 +86,22 @@ window.onload = function() {
              y: Crafty.math.randomInt(0, HEIGHT - SPRITE_HEIGHT)})
       .multiway(4, {UP_ARROW: -90, DOWN_ARROW: 90, RIGHT_ARROW: 0, LEFT_ARROW: 180})
       .bind("NewDirection", function(direction) {
-        if (direction.x < 0 && direction.y < 0) { // up-left
-          this.sprite(7, 0, 1, 1);
-        } else if (direction.x < 0 && direction.y > 0) { // down-left
-          this.sprite(5, 0, 1, 1);
-        } else if (direction.x < 0) { // left
-          this.sprite(6, 0, 1, 1);
-        } else if (direction.x > 0 && direction.y < 0) { // up-right
-          this.sprite(1, 0, 1, 1);
-        } else if (direction.x > 0 && direction.y > 0) { // down-right
-          this.sprite(3, 0, 1, 1);
-        } else if (direction.x > 0) { // right
-          this.sprite(2, 0, 1, 1);
-        } else if (direction.y < 0) { //up
-          this.sprite(0, 0, 1, 1);
-        } else if (direction.y > 0) { // down
-          this.sprite(4, 0, 1, 1);
+        if (direction.x < 0 && direction.y < 0) {
+          this.sprite.apply(this, spriteCoords['trainUpLeft'])
+        } else if (direction.x < 0 && direction.y > 0) {
+          this.sprite.apply(this, spriteCoords['trainDownLeft'])
+        } else if (direction.x < 0) {
+          this.sprite.apply(this, spriteCoords['trainLeft'])
+        } else if (direction.x > 0 && direction.y < 0) {
+          this.sprite.apply(this, spriteCoords['trainUpRight'])
+        } else if (direction.x > 0 && direction.y > 0) {
+          this.sprite.apply(this, spriteCoords['trainDownRight'])
+        } else if (direction.x > 0) {
+          this.sprite.apply(this, spriteCoords['trainRight'])
+        } else if (direction.y < 0) {
+          this.sprite.apply(this, spriteCoords['trainUp'])
+        } else if (direction.y > 0) {
+          this.sprite.apply(this, spriteCoords['trainDown'])
         }
       })
       .bind("Moved", function(oldPosition) {
