@@ -189,16 +189,22 @@ window.onload = function() {
       .attr({x: 150, y: 250, w: 500, h: 100})
       .text("Tap the spacebar to play again")
       .textFont({family: "Arial", size: '30px', weight: 'bold'})
-      .textColor("#FF0000")
+      .textColor("#FF0000");
+
       // TODO: We probably want to wait a second or two before binding the
       // keydown. Otherwise people are going to miss the game over screen
-      .bind("KeyDown", function() {
-        Crafty.scene("main");
-      });
+      var startOver = function(e) {
+        // spacebar
+        if (e.keyCode == 32) {
+          Crafty.unbind("KeyDown", startOver);
+          Crafty.scene("main");
+        }
+      };
+      Crafty.bind("KeyDown", startOver);
   });
 
   Crafty.scene("title");
-}
+};
 
 
 //
