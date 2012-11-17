@@ -238,7 +238,7 @@ window.onload = function() {
       } else {
         moveWater(waterDirection, 8);
 
-        if (gameOverWaterLevel >= HEIGHT / 1.72) {
+        if (gameOverWaterLevel >= HEIGHT / 2.1) {
           clearInterval(gameOverInterval);
           gameOverInterval = null;
         }
