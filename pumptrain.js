@@ -64,6 +64,7 @@ window.onload = function() {
       if (e.keyCode == 32) {
         clearInterval(blinkTimer);
         blinkTimer = null;
+        playSound(soundBuffers.dingdong);
 
         Crafty.unbind("KeyDown", spaceToStart);
         Crafty.scene("main");
@@ -229,6 +230,7 @@ sound = function(){
 
   // if web audio is supported, continue
   if (context) {
+    loadDingDong();
     loadGlug();
     loadRain();
     loadThunder();
@@ -276,8 +278,15 @@ loadRain = function() {
 var soundBuffers = {
   thunder: [],
   glug: null,
-  rain: null
+  rain: null,
+  dingdong: null
 };
+
+loadDingDong = function() {
+  loadSoundFile('dingdong.mp3', function(buffer) {
+    soundBuffers.dingdong = buffer;
+  })
+}
 
 loadGlug = function() {
   loadSoundFile('glug.mp3', function(buffer) {
