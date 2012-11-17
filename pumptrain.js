@@ -10,6 +10,8 @@ window.onload = function() {
   var WIDTH = 800;
   var HEIGHT = 576;
   var SPRITE_WIDTH = SPRITE_HEIGHT = 53;
+  var NUMBER_WIDTH = 21;
+  var NUMBER_HEIGHT = 32;
   var INITIAL_WATER_LEVEL = 2;
   var MAX_WATER_LEVEL = 9;
   var spriteCoords = {
@@ -44,6 +46,37 @@ window.onload = function() {
   sound();
 
   Crafty.sprite(SPRITE_WIDTH, "images/sprite.png", spriteCoords);
+  Crafty.sprite("images/number-sprite.png", {
+    n0: [0 * NUMBER_WIDTH, 0, NUMBER_WIDTH, NUMBER_HEIGHT],
+    n1: [1 * NUMBER_WIDTH, 0, NUMBER_WIDTH, NUMBER_HEIGHT],
+    n2: [2 * NUMBER_WIDTH, 0, NUMBER_WIDTH, NUMBER_HEIGHT],
+    n3: [3 * NUMBER_WIDTH, 0, NUMBER_WIDTH, NUMBER_HEIGHT],
+    n4: [4 * NUMBER_WIDTH, 0, NUMBER_WIDTH, NUMBER_HEIGHT],
+    n5: [5 * NUMBER_WIDTH, 0, NUMBER_WIDTH, NUMBER_HEIGHT],
+    n6: [6 * NUMBER_WIDTH, 0, NUMBER_WIDTH, NUMBER_HEIGHT],
+    n7: [7 * NUMBER_WIDTH, 0, NUMBER_WIDTH, NUMBER_HEIGHT],
+    n8: [8 * NUMBER_WIDTH, 0, NUMBER_WIDTH, NUMBER_HEIGHT],
+    n9: [9 * NUMBER_WIDTH, 0, NUMBER_WIDTH, NUMBER_HEIGHT]
+  });
+
+  var drawNumber = function(number, x, y) {
+    var numbers = [];
+    var s = number.toString();
+    var e;
+    for (var i = 0; i < s.length; i++) {
+      e = Crafty.e("2D, Canvas, n" + s[i])
+          .attr({x: x + i * NUMBER_WIDTH, y: y});
+      numbers.push(e);
+    }
+
+    return numbers;
+  };
+
+  var clearNumber = function(numbers) {
+    for (var i = 0; i < numbers.length; i++) {
+      numbers[i].destroy();
+    }
+  };
 
   Crafty.scene("title", function() {
     var title1 = Crafty.e("2D, DOM, Image").attr({x: 0, y: 0}).image("images/start-screen-0.png");
