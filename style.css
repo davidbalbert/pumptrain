@@ -1,0 +1,20 @@
+body{
+  background: #000;
+}
+
+body.lightening{
+  background: #fff;
+}
+
+h1{
+  color: #f00;
+}
+
+h1.lightening{
+  color: #faa;
+}
+
+#cr-stage{
+  background-color: black;
+  border: 1px solid white;
+}
