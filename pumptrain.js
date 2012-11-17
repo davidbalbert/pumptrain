@@ -337,7 +337,7 @@ window.onload = function() {
                 playAgain.attr({y: HEIGHT * 2});
               }
             }, 1000);
-          }, 1500);
+          }, 2000);
         }
       }
     }, 25);
