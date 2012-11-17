@@ -42,6 +42,6 @@ p {
   text-align: center;
 }
 
-a:visited {
-  color: blue;
+a{
+  color: rgb(61, 92, 255);
 }
