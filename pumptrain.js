@@ -192,16 +192,19 @@ window.onload = function() {
       .textFont({family: "Arial", size: '30px', weight: 'bold'})
       .textColor("#FF0000");
 
-      // TODO: We probably want to wait a second or two before binding the
-      // keydown. Otherwise people are going to miss the game over screen
-      var startOver = function(e) {
-        // spacebar
-        if (e.keyCode == 32) {
-          Crafty.unbind("KeyDown", startOver);
-          Crafty.scene("main");
-        }
-      };
-      Crafty.bind("KeyDown", startOver);
+      // Wait for a second before registering the keypress event. This is to
+      // make sure the player doesn't skip over the game over screen by pumping
+      // right when the game ends
+      setTimeout(function() {
+        var startOver = function(e) {
+          // spacebar
+          if (e.keyCode == 32) {
+            Crafty.unbind("KeyDown", startOver);
+            Crafty.scene("main");
+          }
+        };
+        Crafty.bind("KeyDown", startOver);
+      }, 1000);
   });
 
   Crafty.scene("title");
