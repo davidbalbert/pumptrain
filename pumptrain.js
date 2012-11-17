@@ -113,6 +113,7 @@ window.onload = function() {
       .bind("KeyDown", function(e) {
         if (e.key == Crafty.keys['SPACE'] && this.currentStation != null) {
           this.currentStation.pump();
+          createSource(this.glug).source.noteOn(0);
         }
       })
       .onHit("Station", function(entities) {
@@ -180,6 +181,7 @@ sound = function(){
 
   // if web audio is supported, continue
   if (context) {
+    loadGlug();
     loadRain();
     loadThunder();
     randomizeThunder();
@@ -253,6 +255,19 @@ this.thunder1 = null;
 this.thunder2 = null;
 this.thunder3 = null;
 this.thunder4 = null;
+this.glug = null;
+
+loadGlug = function(){
+  var request1 = new XMLHttpRequest();
+  request1.open('GET', 'sound/glug.mp3', true);
+  request1.responseType = 'arraybuffer';
+  request1.onload = function() {
+    context.decodeAudioData(request1.response, function(buffer) {
+      _this.glug = buffer;
+    })
+  }
+  request1.send();
+}
 
 // load in 4 thunder samples as buffers
 // don't hate me, but I can't figure out how not to repeat
