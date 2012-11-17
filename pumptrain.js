@@ -7,18 +7,10 @@ window.onkeydown = function(e) {
 };
 
 window.onload = function() {
-  sound();
-
-  WIDTH = 800;
-  HEIGHT = 576;
-
-  SPRITE_WIDTH = SPRITE_HEIGHT = 53;
-
-  INITIAL_WATER_LEVEL = 2;
-
-  Crafty.init(WIDTH, HEIGHT);
-  Crafty.canvas.init();
-
+  var WIDTH = 800;
+  var HEIGHT = 576;
+  var SPRITE_WIDTH = SPRITE_HEIGHT = 53;
+  var INITIAL_WATER_LEVEL = 2;
   var spriteCoords = {
     trainUp:        [0, 0, 1, 1],
     trainUpRight:   [1, 0, 1, 1],
@@ -39,6 +31,11 @@ window.onload = function() {
     station8:       [8, 1, 1, 1],
     station9:       [9, 1, 1, 1]
   };
+
+  Crafty.init(WIDTH, HEIGHT);
+  Crafty.canvas.init();
+
+  sound();
 
   Crafty.sprite(SPRITE_WIDTH, "images/sprite.png", spriteCoords);
 
