@@ -241,6 +241,8 @@ window.onload = function() {
         if (gameOverWaterLevel >= HEIGHT / 2.1) {
           clearInterval(gameOverInterval);
           gameOverInterval = null;
+
+          var scoreText = Crafty.e('2D, DOM, Image').attr({x: 0, y: HEIGHT * 0.7}).image('images/score-text.png');
         }
       }
     }, 25);
