@@ -37,6 +37,10 @@ window.onload = function() {
   Crafty.init(WIDTH, HEIGHT);
   Crafty.canvas.init();
 
+  flashScreen = document.createElement('div');
+  flashScreen.className = 'flash-screen'
+  document.getElementById('cr-stage').appendChild(flashScreen);
+
   sound();
 
   Crafty.sprite(SPRITE_WIDTH, "images/sprite.png", spriteCoords);
@@ -62,6 +66,7 @@ window.onload = function() {
       if (e.keyCode == 32) {
         clearInterval(blinkTimer);
         blinkTimer = null;
+        playSound(soundBuffers.dingdong);
 
         Crafty.unbind("KeyDown", spaceToStart);
         Crafty.scene("main");
@@ -206,35 +211,61 @@ window.onload = function() {
   });
 
   Crafty.scene("gameover", function() {
-    Crafty.background("black");
-    Crafty.e("2D, DOM, Text")
-      .attr({x: 150, y: 200, w: 500, h: 100})
-      .text("Game Over :( You pumped " + gallonsPumped + " gallons of water")
-      .textFont({family: "Arial", size: '100px', weight: 'bold'})
-      .textColor("#FF0000");
+    Crafty.background("url('images/game-over-background-1.png')");
 
-    Crafty.e("2D, DOM, Text")
-      .attr({x: 150, y: 250, w: 500, h: 100})
-      .text("Tap the spacebar to play again")
-      .textFont({family: "Arial", size: '30px', weight: 'bold'})
-      .textColor("#FF0000");
+    var water = Crafty.e('2D, DOM, Image').attr({x: 0, y: HEIGHT}).image('images/game-over-water.png');
+    var gameOverWaterLevel = HEIGHT;
 
-      // Wait for a second before registering the keypress event. This is to
-      // make sure the player doesn't skip over the game over screen by pumping
-      // right when the game ends
-      setTimeout(function() {
-        var startOver = function(e) {
-          // spacebar
-          if (e.keyCode == 32) {
-            Crafty.unbind("KeyDown", startOver);
-            Crafty.scene("main");
+    moveWater = function(direction, delta) {
+      if (direction == 'up') {
+        gameOverWaterLevel -= delta;
+      } else {
+        gameOverWaterLevel += delta;
+      }
+
+      water.attr({y: gameOverWaterLevel});
+    };
+
+    var waterDirection = 'up';
+    var gameOverInterval = setInterval(function() {
+      if (waterDirection == 'up') {
+        moveWater(waterDirection, 8);
+
+        if (gameOverWaterLevel <= 0) {
+          Crafty.background("url('images/game-over-background-2.png')");
+          waterDirection = 'down';
+        }
+      } else {
+        moveWater(waterDirection, 8);
+
+        if (gameOverWaterLevel >= HEIGHT / 1.72) {
+          clearInterval(gameOverInterval);
+          gameOverInterval = null;
+        }
+      }
+    }, 25);
+
+    // Wait for a second before registering the keypress event. This is to
+    // make sure the player doesn't skip over the game over screen by pumping
+    // right when the game ends
+    setTimeout(function() {
+      var startOver = function(e) {
+        // spacebar
+        if (e.keyCode == 32) {
+          Crafty.unbind("KeyDown", startOver);
+          if (gameOverInterval) {
+            clearInterval(gameOverInterval);
+            gameOverInterval = null;
           }
-        };
-        Crafty.bind("KeyDown", startOver);
-      }, 1000);
+          Crafty.scene("main");
+        }
+      };
+      Crafty.bind("KeyDown", startOver);
+    }, 1000);
   });
 
-  Crafty.scene("title");
+  //Crafty.scene("title");
+  Crafty.scene("gameover");
 };
 
 
@@ -252,6 +283,7 @@ sound = function() {
   }
 
   if (context) {
+    loadDingDong();
     loadGlug();
     loadRain();
     loadThunder();
@@ -299,8 +331,15 @@ loadRain = function() {
 var soundBuffers = {
   thunder: [],
   glug: null,
-  rain: null
+  rain: null,
+  dingdong: null
 };
+
+loadDingDong = function() {
+  loadSoundFile('dingdong.mp3', function(buffer) {
+    soundBuffers.dingdong = buffer;
+  })
+}
 
 loadGlug = function() {
   loadSoundFile('glug.mp3', function(buffer) {
@@ -320,7 +359,9 @@ loadThunder = function() {
 }
 
 playSound = function(buffer) {
-  createSource(buffer).source.noteOn(0);
+  if (context) {
+    createSource(buffer).source.noteOn(0);
+  }
 };
 
 loadSoundFile = function(filename, callback) {
