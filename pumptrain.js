@@ -35,6 +35,7 @@ window.onload = function() {
     station9:       [9, 1, 1, 1]
   };
   var gallonsPumped;
+  var gallonsElements = [];
 
   Crafty.init(WIDTH, HEIGHT);
   Crafty.canvas.init();
@@ -114,15 +115,15 @@ window.onload = function() {
 
     gallonsPumped = 0;
 
-    var scoreText = Crafty.e("2D, DOM, Text")
-      .attr({x: WIDTH - 100, y: 0, w: 100, h: 100})
-      .textFont({family: "Arial", size: '12px'})
-      .textColor("#FF0000");
+    Crafty.e("2D, DOM, Image")
+      .attr({x: 0, y: 10})
+      .image("images/gallons.png");
 
     updateScoreText();
 
     function updateScoreText() {
-      scoreText.text("Gallons: " + gallonsPumped);
+      clearNumber(gallonsElements);
+      gallonsElements = drawNumber(gallonsPumped, 150, 5);
     }
 
     Crafty.c("Station", {
@@ -370,8 +371,6 @@ window.onload = function() {
             playAgainInterval = null;
           }
 
-          clearNumber(yourScoreElements);
-          clearNumber(highScoreElements);
           Crafty.scene("main");
           playSound(soundBuffers.dingdong);
         }
