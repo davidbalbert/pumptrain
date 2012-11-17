@@ -78,6 +78,23 @@ window.onload = function() {
     }
   };
 
+  // loading scene preloads all images, then runs title scene
+  Crafty.scene("loading", function() {
+    Crafty.e("2D, DOM, Image").attr({x: 0, y: 0}).image("images/loading.png");
+
+    Crafty.load(['images/sprite.png', 'images/gallons.png', 'images/game-over-background-1.png', 'images/game-over-background-2.png', 'images/game-over-train.png', 'images/game-over-water.png', 'images/map.png', 'images/number-sprite.png', 'images/play-again.png', 'images/score-text.png', 'images/start-screen-0.png', 'images/start-screen-1.png'],
+      function() {
+        Crafty.scene("title");
+      },
+      function(e) {
+        //progress
+      },
+      function(e) {
+        // error
+      }
+   );
+  });
+
   Crafty.scene("title", function() {
     var title1 = Crafty.e("2D, DOM, Image").attr({x: 0, y: 0}).image("images/start-screen-0.png");
     var title2 = Crafty.e("2D, DOM, Image").attr({x: 0, y: 0}).image("images/start-screen-1.png");
@@ -370,7 +387,7 @@ window.onload = function() {
     }, 1000);
   });
 
-  Crafty.scene("title");
+  Crafty.scene("loading");
 };
 
 
