@@ -77,6 +77,7 @@ window.onload = function() {
                y: Crafty.math.randomInt(0, HEIGHT - SPRITE_HEIGHT)});
     }
 
+    _this = this;
     Crafty.e("2D, Canvas, trainDownRight, Multiway, Collision")
       .attr({x: Crafty.math.randomInt(0, WIDTH - SPRITE_WIDTH),
              y: Crafty.math.randomInt(0, HEIGHT - SPRITE_HEIGHT)})
@@ -109,7 +110,7 @@ window.onload = function() {
       .bind("KeyDown", function(e) {
         if (e.key == Crafty.keys['SPACE'] && this.currentStation != null) {
           this.currentStation.pump();
-          createSource(this.glug).source.noteOn(0);
+          createSource(_this.glug).source.noteOn(0);
         }
       })
       .onHit("Station", function(entities) {
