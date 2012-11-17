@@ -211,7 +211,11 @@ window.onload = function() {
   });
 
   Crafty.scene("gameover", function() {
-    Crafty.background("url('images/game-over-background-1.png')");
+    var background2 = Crafty.e("2D, DOM, Image").attr({x: 0, y: 0}).image("images/game-over-background-2.png");
+    var background1 = Crafty.e("2D, DOM, Image").attr({x: 0, y: 0}).image("images/game-over-background-1.png");
+
+    window.bg2 = background2;
+
 
     var water = Crafty.e('2D, DOM, Image').attr({x: 0, y: HEIGHT}).image('images/game-over-water.png');
     var gameOverWaterLevel = HEIGHT;
@@ -227,12 +231,13 @@ window.onload = function() {
     };
 
     var waterDirection = 'up';
+    var rotateTrainInterval = null;
     var gameOverInterval = setInterval(function() {
       if (waterDirection == 'up') {
         moveWater(waterDirection, 8);
 
         if (gameOverWaterLevel <= 0) {
-          Crafty.background("url('images/game-over-background-2.png')");
+          background1.visible = false;
           waterDirection = 'down';
         }
       } else {
@@ -241,6 +246,29 @@ window.onload = function() {
         if (gameOverWaterLevel >= HEIGHT / 2.1) {
           clearInterval(gameOverInterval);
           gameOverInterval = null;
+
+          var rotation = 0;
+          var direction = "right";
+          rotateTrainInterval = setInterval(function() {
+            var delta = 1;
+            var limit = 1;
+            if (direction == "right") {
+              if (rotation == limit) {
+                direction = "left";
+                rotation -= delta;
+              } else {
+                rotation += delta;
+              }
+            } else {
+              if (rotation <= -limit) {
+                direction = "right";
+                rotation += delta;
+              } else {
+                rotation -= delta;
+              }
+            }
+            background2.rotation = rotation;
+          }, 1000);
         }
       }
     }, 25);
@@ -256,6 +284,10 @@ window.onload = function() {
           if (gameOverInterval) {
             clearInterval(gameOverInterval);
             gameOverInterval = null;
+          }
+          if (rotateTrainInterval) {
+            clearInterval(rotateTrainInterval);
+            rotateTrainInterval = null;
           }
           Crafty.scene("main");
         }
