@@ -369,7 +369,7 @@ lightening = function(){
 }
 
 flash = function() {
-  var body = document.getElementById('body');
+  var body = document.getElementsByTagName('body')[0];
 
   body.className = 'lightening';
   setTimeout(function() {

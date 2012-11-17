@@ -18,15 +18,6 @@ body.lightening {
   background: #fff;
 }
 
-h1 {
-  color: #f00;
-  text-align: center;
-}
-
-body.lightening h1 {
-  color: #faa;
-}
-
 #cr-stage {
   background-color: black;
   border: 1px solid white;
