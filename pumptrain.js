@@ -40,8 +40,8 @@ window.onload = function() {
   Crafty.sprite(SPRITE_WIDTH, "images/sprite.png", spriteCoords);
 
   Crafty.scene("title", function() {
-    var title1 = Crafty.e("2D, DOM, Image").attr({x: 0, y: 0}).image("images/tmptitle1.png");
-    var title2 = Crafty.e("2D, DOM, Image").attr({x: 0, y: 0}).image("images/tmptitle2.png");
+    var title1 = Crafty.e("2D, DOM, Image").attr({x: 0, y: 0}).image("images/start-screen-0.png");
+    var title2 = Crafty.e("2D, DOM, Image").attr({x: 0, y: 0}).image("images/start-screen-1.png");
     title1.visible = true;
     title2.visible = false;
 
