@@ -36,3 +36,12 @@ body.lightening {
 body.lightening #cr-stage .flash-screen {
   background: rgba(255,255,255,0.8);
 }
+
+p {
+  color: white;
+  text-align: center;
+}
+
+a{
+  color: rgb(61, 92, 255);
+}
