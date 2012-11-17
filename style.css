@@ -32,3 +32,16 @@ body.lightening h1 {
   border: 1px solid white;
   margin: 0 auto;
 }
+
+#cr-stage .flash-screen {
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+body.lightening #cr-stage .flash-screen {
+  background: rgba(255,255,255,0.8);
+}

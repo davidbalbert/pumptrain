@@ -34,6 +34,10 @@ window.onload = function() {
 
   Crafty.init(WIDTH, HEIGHT);
   Crafty.canvas.init();
+  
+  flashScreen = document.createElement('div');
+  flashScreen.className = 'flash-screen'
+  document.getElementById('cr-stage').appendChild(flashScreen); 
 
   sound();
 
@@ -229,6 +233,9 @@ sound = function(){
     loadRain();
     loadThunder();
     randomizeThunder();
+    setTimeout(function(){
+      flash();
+    }, 3000); 
   }
 }
 
