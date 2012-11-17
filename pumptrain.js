@@ -332,7 +332,9 @@ loadThunder = function() {
 }
 
 playSound = function(buffer) {
-  createSource(buffer).source.noteOn(0);
+  if (context) {
+    createSource(buffer).source.noteOn(0);
+  }
 };
 
 loadSoundFile = function(filename, callback) {
