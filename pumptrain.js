@@ -231,7 +231,7 @@ this.thunder2 = null;
 this.thunder3 = null;
 this.thunder4 = null;
 
-// load in 4 thunder samples
+// load in 4 thunder samples as buffers
 // don't hate me, but I can't figure out how not to repeat
 // the below loader code :(
 loadThunder = function(){
@@ -240,7 +240,7 @@ loadThunder = function(){
   request1.responseType = 'arraybuffer';
   request1.onload = function() {
     context.decodeAudioData(request1.response, function(buffer) {
-      _this.thunder1 = createSource(buffer);
+      _this.thunder1 = buffer;
     })
   }
   request1.send();
@@ -250,7 +250,7 @@ loadThunder = function(){
   request2.responseType = 'arraybuffer';
   request2.onload = function() {
     context.decodeAudioData(request2.response, function(buffer) {
-      _this.thunder2 = createSource(buffer);
+      _this.thunder2 = buffer;
     })
   }
   request2.send();
@@ -260,7 +260,7 @@ loadThunder = function(){
   request3.responseType = 'arraybuffer';
   request3.onload = function() {
     context.decodeAudioData(request3.response, function(buffer) {
-      _this.thunder3 = createSource(buffer);
+      _this.thunder3 = buffer;
     })
   }
   request3.send();
@@ -270,7 +270,7 @@ loadThunder = function(){
   request4.responseType = 'arraybuffer';
   request4.onload = function() {
     context.decodeAudioData(request4.response, function(buffer) {
-      _this.thunder4 = createSource(buffer);
+      _this.thunder4 = buffer;
     })
   }
   request4.send();
@@ -281,6 +281,7 @@ loadThunder = function(){
 randomizeThunder = function(){
   // pick a random number between 10000 and 30000 (10-30 seconds)
   wait = Math.ceil(Math.random() * 20000) + 10000;
+
   setTimeout(function(){
     playRandomThunder();
     randomizeThunder();
@@ -311,9 +312,11 @@ playRandomThunder = function(){
     // trigger a random sound using the length of the
     // array of loaded sounds
     rand = Math.floor(Math.random() * thunderArray.length);
-    console.log('playing thunder sample ' + rand);
-    thunderArray[rand].source.noteOn(0);
 
+    // play the random one, creating a new sourcenode
+    createSource(thunderArray[rand]).source.noteOn(0);
+
+    // trigger randomized flashes
     lightening();
   }
 }
@@ -327,6 +330,7 @@ lightening = function(){
   // initial flash
   flash();
 
+  // add the delays together if necessary for the second and third flashes
   for (i = 0; i < numberOfFlashes; i++) {
     switch (i) {
       case 1:
