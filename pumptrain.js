@@ -179,6 +179,7 @@ window.onload = function() {
   });
 
   Crafty.scene("gameover", function() {
+    Crafty.background("black");
     Crafty.e("2D, DOM, Text")
       .attr({x: 150, y: 200, w: 500, h: 100})
       .text("Game Over :(")
