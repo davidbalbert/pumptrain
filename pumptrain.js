@@ -287,6 +287,7 @@ window.onload = function() {
             playAgainInterval = null;
           }
           Crafty.scene("main");
+          playSound(soundBuffers.dingdong);
         }
       };
       Crafty.bind("KeyDown", startOver);
