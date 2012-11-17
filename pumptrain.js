@@ -39,6 +39,35 @@ window.onload = function() {
 
   Crafty.sprite(SPRITE_WIDTH, "images/sprite.png", spriteCoords);
 
+  Crafty.scene("title", function() {
+    var title1 = Crafty.e("2D, DOM, Image").attr({x: 0, y: 0}).image("images/start-screen-0.png");
+    var title2 = Crafty.e("2D, DOM, Image").attr({x: 0, y: 0}).image("images/start-screen-1.png");
+    title1.visible = true;
+    title2.visible = false;
+
+    var blinkTimer = setInterval(function() {
+      if (title1.visible) {
+        title1.visible = false;
+        title2.visible = true;
+      } else {
+        title1.visible = true;
+        title2.visible = false;
+      }
+    }, 1000);
+
+    var spaceToStart = function(e) {
+      // spacebar
+      if (e.keyCode == 32) {
+        clearInterval(blinkTimer);
+        blinkTimer = null;
+
+        Crafty.unbind("KeyDown", spaceToStart);
+        Crafty.scene("main");
+      }
+    };
+    Crafty.bind("KeyDown", spaceToStart);
+  });
+
   Crafty.scene("main", function() {
     Crafty.background("url('images/map.png')");
 
@@ -149,6 +178,7 @@ window.onload = function() {
   });
 
   Crafty.scene("gameover", function() {
+    Crafty.background("black");
     Crafty.e("2D, DOM, Text")
       .attr({x: 150, y: 200, w: 500, h: 100})
       .text("Game Over :(")
@@ -159,14 +189,25 @@ window.onload = function() {
       .attr({x: 150, y: 250, w: 500, h: 100})
       .text("Tap the spacebar to play again")
       .textFont({family: "Arial", size: '30px', weight: 'bold'})
-      .textColor("#FF0000")
-      .bind("KeyDown", function() {
-        Crafty.scene("main");
-      });
+      .textColor("#FF0000");
+
+      // Wait for a second before registering the keypress event. This is to
+      // make sure the player doesn't skip over the game over screen by pumping
+      // right when the game ends
+      setTimeout(function() {
+        var startOver = function(e) {
+          // spacebar
+          if (e.keyCode == 32) {
+            Crafty.unbind("KeyDown", startOver);
+            Crafty.scene("main");
+          }
+        };
+        Crafty.bind("KeyDown", startOver);
+      }, 1000);
   });
 
-  Crafty.scene("main");
-}
+  Crafty.scene("title");
+};
 
 
 //
