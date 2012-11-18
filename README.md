@@ -18,3 +18,5 @@ Geraci.
 
 This software (excluding the audio files) is released under the terms of the
 [GPL v3](http://www.gnu.org/licenses/gpl.html).
+
+The audio files were downloaded from [freesound.org](http://www.freesound.org/), but we forgot to check their licenses. If you recognize your audio and want credit or want it removed, let us know!
