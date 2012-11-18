@@ -58,7 +58,7 @@ window.onload = function() {
   flashScreen.className = 'flash-screen'
   document.getElementById('cr-stage').appendChild(flashScreen);
 
-  sound();
+  //sound();
 
   Crafty.sprite(SPRITE_WIDTH, "images/sprite.png", spriteCoords);
   Crafty.sprite("images/number-sprite.png", {
@@ -98,8 +98,18 @@ window.onload = function() {
   Crafty.scene("loading", function() {
     Crafty.e("2D, DOM, Image").attr({x: 0, y: 0}).image("images/loading.png");
 
-    Crafty.load(['images/sprite.png', 'images/gallons.png', 'images/game-over-background-1.png', 'images/game-over-background-2.png', 'images/game-over-train.png', 'images/game-over-water.png', 'images/map.png', 'images/number-sprite.png', 'images/play-again.png', 'images/score-text.png', 'images/start-screen-0.png', 'images/start-screen-1.png'],
+    Crafty.load(['images/sprite.png', 'images/gallons.png', 'images/game-over-background-1.png', 'images/game-over-background-2.png', 'images/game-over-train.png', 'images/game-over-water.png', 'images/map.png', 'images/number-sprite.png', 'images/play-again.png', 'images/score-text.png', 'images/start-screen-0.png', 'images/start-screen-1.png', "sound/dingdong.mp3", "sound/dingdong.ogg", "sound/dingdong.wav", "sound/glug.mp3", "sound/glug.ogg", "sound/glug.wav", "sound/rain.mp3", "sound/rain.ogg", "sound/rain.wav", "sound/siren.mp3", "sound/siren.ogg", "sound/siren.wav", "sound/thunder1.mp3", "sound/thunder1.ogg", "sound/thunder1.wav", "sound/thunder2.mp3", "sound/thunder2.ogg", "sound/thunder2.wav", "sound/thunder3.mp3", "sound/thunder3.ogg", "sound/thunder3.wav", "sound/thunder4.mp3", "sound/thunder4.ogg", "sound/thunder4.wav"],
       function() {
+        Crafty.audio.add({
+            dingdong: ["sound/dingdong.mp3", "sound/dingdong.ogg", "sound/dingdong.wav"],
+            glug: ["sound/glug.mp3", "sound/glug.ogg", "sound/glug.wav"],
+            rain: ["sound/rain.mp3", "sound/rain.ogg", "sound/rain.wav"],
+            siren: ["sound/siren.mp3", "sound/siren.ogg", "sound/siren.wav"],
+            thunder1: ["sound/thunder1.mp3", "sound/thunder1.ogg", "sound/thunder1.wav"],
+            thunder2: ["sound/thunder2.mp3", "sound/thunder2.ogg", "sound/thunder2.wav"],
+            thunder3: ["sound/thunder3.mp3", "sound/thunder3.ogg", "sound/thunder3.wav"],
+            thunder4: ["sound/thunder4.mp3", "sound/thunder4.ogg", "sound/thunder4.wav"]
+        });
         Crafty.scene("title");
       },
       function(e) {
@@ -475,11 +485,10 @@ loadRain = function() {
 }
 
 var soundBuffers = {
-  thunder: [],
-  glug: null,
-  rain: null,
-  dingdong: null,
-  siren: null
+  thunder: ["thunder1", "thunder2", "thunder3", "thunder4"],
+  glug: "glug",
+  dingdong: "dingdong",
+  siren: "siren"
 };
 
 loadDingDong = function() {
@@ -511,16 +520,12 @@ loadThunder = function() {
   }
 }
 
-playSound = function(buffer, volume) {
+playSound = function(name, volume) {
   if (!volume) {
     volume = 1;
   }
 
-  if (context) {
-    source = createSource(buffer);
-    source.gainNode.gain.value = volume;
-    source.source.noteOn(0);
-  }
+  Crafty.audio.play(name, 1, volume);
 };
 
 loadSoundFile = function(filename, callback) {
