@@ -442,7 +442,7 @@ loopRain = function() {
     } else {
       Crafty.audio.play('rain2');
     }
-     rain = rain == 1 ? 2 : 1;
+    rain = rain == 1 ? 2 : 1;
   }
 }
 
