@@ -426,7 +426,7 @@ window.onload = function() {
 
 
 //
-// sound effects from here on down
+// sound and visual effects from here on down
 //
 
 // rain is 40sec, with 10sec fades at start and end
@@ -455,7 +455,6 @@ playSound = function(name, volume) {
 };
 
 // a recursive call to trigger a random thunder sample
-// every once in a while
 randomizeThunder = function() {
   // wait between 10 and 25 sec
   var wait = Math.ceil(Math.random() * 10000) + 15000;
@@ -466,15 +465,11 @@ randomizeThunder = function() {
   }, wait);
 }
 
-// trigger a noteOn for one of the samples
-// add and remove the class "lightening" to the body
-// a random number of times
+// play a random thunder sample
+// flash a random number of times
 playRandomThunder = function() {
   var rand = Math.ceil(Math.random() * 4);
-
   playSound('thunder' + rand);
-
-  // trigger randomized flashes
   lightening();
 }
 
@@ -482,27 +477,18 @@ playRandomThunder = function() {
 // a random number of times with a random interval
 lightening = function() {
   var numberOfFlashes = Math.ceil(Math.random() * 3);
-  var delays = [Math.ceil(Math.random() * 400), Math.ceil(Math.random() * 400)];
-  var delay;
+  var delay1 = Math.ceil(Math.random() * 400);
+  var delay2 = Math.ceil(Math.random() * 400);
+  var delays = [0, delay1, delay1 + delay2];
 
+  // show the first flash immediately...
   flash();
 
-  // add the delays together if necessary for the second and third flashes
+  // ...then run setTimeouts for the other two (if they exist)
   for (var i = 0; i < numberOfFlashes; i++) {
-    switch (i) {
-      case 1:
-        delay = delays[0];
-        break;
-      case 2:
-        delay = delays[0] + delays[1];
-        break;
-      default:
-        delay = 0;
-    }
-
     setTimeout(function() {
       flash();
-    }, delay);
+    }, delays[i]);
   }
 }
 
