@@ -44,8 +44,6 @@ window.onload = function() {
   flashScreen.className = 'flash-screen'
   document.getElementById('cr-stage').appendChild(flashScreen);
 
-  sound();
-
   Crafty.sprite(SPRITE_WIDTH, "images/sprite.png", spriteCoords);
   Crafty.sprite("images/number-sprite.png", {
     n0: [0 * NUMBER_WIDTH, 0, NUMBER_WIDTH, NUMBER_HEIGHT],
@@ -84,8 +82,35 @@ window.onload = function() {
   Crafty.scene("loading", function() {
     Crafty.e("2D, DOM, Image").attr({x: 0, y: 0}).image("images/loading.png");
 
-    Crafty.load(['images/sprite.png', 'images/gallons.png', 'images/game-over-background-1.png', 'images/game-over-background-2.png', 'images/game-over-train.png', 'images/game-over-water.png', 'images/map.png', 'images/number-sprite.png', 'images/play-again.png', 'images/score-text.png', 'images/start-screen-0.png', 'images/start-screen-1.png'],
+    Crafty.load([
+      'images/sprite.png', 'images/gallons.png', 'images/game-over-background-1.png',
+      'images/game-over-background-2.png', 'images/game-over-train.png',
+      'images/game-over-water.png', 'images/map.png', 'images/number-sprite.png',
+      'images/play-again.png', 'images/score-text.png', 'images/start-screen-0.png',
+      'images/start-screen-1.png', "sound/dingdong.mp3", "sound/dingdong.ogg",
+      "sound/dingdong.wav", "sound/glug.mp3", "sound/glug.ogg", "sound/glug.wav",
+      "sound/rain1.mp3", "sound/rain1.ogg", "sound/rain1.wav",
+      "sound/rain2.mp3", "sound/rain2.ogg", "sound/rain2.wav", "sound/siren.mp3",
+      "sound/siren.ogg", "sound/siren.wav", "sound/thunder1.mp3", "sound/thunder1.ogg",
+      "sound/thunder1.wav", "sound/thunder2.mp3", "sound/thunder2.ogg", "sound/thunder2.wav",
+      "sound/thunder3.mp3", "sound/thunder3.ogg", "sound/thunder3.wav", "sound/thunder4.mp3",
+      "sound/thunder4.ogg", "sound/thunder4.wav"
+      ],
       function() {
+        Crafty.audio.add({
+          dingdong: ["sound/dingdong.mp3", "sound/dingdong.ogg", "sound/dingdong.wav"],
+          glug: ["sound/glug.mp3", "sound/glug.ogg", "sound/glug.wav"],
+          rain1: ["sound/rain1.mp3", "sound/rain1.ogg", "sound/rain1.wav"],
+          rain2: ["sound/rain2.mp3", "sound/rain2.ogg", "sound/rain2.wav"],
+          siren: ["sound/siren.mp3", "sound/siren.ogg", "sound/siren.wav"],
+          thunder1: ["sound/thunder1.mp3", "sound/thunder1.ogg", "sound/thunder1.wav"],
+          thunder2: ["sound/thunder2.mp3", "sound/thunder2.ogg", "sound/thunder2.wav"],
+          thunder3: ["sound/thunder3.mp3", "sound/thunder3.ogg", "sound/thunder3.wav"],
+          thunder4: ["sound/thunder4.mp3", "sound/thunder4.ogg", "sound/thunder4.wav"]
+        });
+
+        loopRain();
+        randomizeThunder();
         Crafty.scene("title");
       },
       function(e) {
@@ -118,7 +143,7 @@ window.onload = function() {
       if (e.keyCode == 32) {
         clearInterval(playAgainInterval);
         playAgainInterval = null;
-        playSound(soundBuffers.dingdong);
+        playSound('dingdong');
 
         Crafty.unbind("KeyDown", spaceToStart);
         Crafty.scene("main");
@@ -240,7 +265,7 @@ window.onload = function() {
       .bind("KeyDown", function(e) {
         if (e.key == Crafty.keys['SPACE'] && this.currentStation != null) {
           this.currentStation.pump();
-          playSound(soundBuffers.glug, 0.4);
+          playSound('glug', 0.4);
         }
       })
       .onHit("Station", function(entities) {
@@ -273,7 +298,7 @@ window.onload = function() {
   });
 
   Crafty.scene("gameover", function() {
-    playSound(soundBuffers.siren);
+    playSound('siren');
     var background2 = Crafty.e("2D, DOM, Image").attr({x: 0, y: 0}).image("images/game-over-background-2.png");
     var background1 = Crafty.e("2D, DOM, Image").attr({x: 0, y: 0}).image("images/game-over-background-1.png");
 
@@ -389,7 +414,7 @@ window.onload = function() {
           }
 
           Crafty.scene("main");
-          playSound(soundBuffers.dingdong);
+          playSound('dingdong');
         }
       };
       Crafty.bind("KeyDown", startOver);
@@ -404,120 +429,30 @@ window.onload = function() {
 // sound effects from here on down
 //
 
-var context;
-sound = function() {
-  try {
-    context = new webkitAudioContext();
-  }
-  catch(e) {
-    console.log('Web Audio API is not supported in this browser');
-  }
+// rain is 40sec, with 10sec fades at start and end
+loopRain = function() {
+  var rain = 1;
 
-  if (context) {
-    loadDingDong();
-    loadGlug();
-    loadSiren();
-    loadRain();
-    loadThunder();
-    randomizeThunder();
-  }
-}
+  playRain();
+  setInterval(playRain, 30000);
 
-// start an infinite loop of two instances of the same rain sample
-// which crossfade between each other at the end
-loadRain = function() {
-  // Decode asynchronously
-  var callback = function(buffer) {
-    soundBuffers.rain = buffer;
-
-    playHelper(buffer, buffer);
-
-    // create a two buffers to switch between
-    function playHelper(bufferNow, bufferLater) {
-      var fadeTime = 10;
-      var playNow = createSource(bufferNow);
-      var source = playNow.source;
-      this.source = source;
-      var gainNode = playNow.gainNode;
-      var duration = bufferNow.duration;
-      var currTime = context.currentTime;
-      // Fade the playNow track in.
-      gainNode.gain.linearRampToValueAtTime(0, currTime);
-      gainNode.gain.linearRampToValueAtTime(1, currTime + fadeTime);
-      // Play the playNow track.
-      source.noteOn(0);
-      // At the end of the track, fade it out.
-      gainNode.gain.linearRampToValueAtTime(1, currTime + duration - fadeTime);
-      gainNode.gain.linearRampToValueAtTime(0, currTime + duration);
-      // Schedule a recursive track change with the tracks swapped.
-      var recurse = arguments.callee;
-      this.timer = setTimeout(function() {
-        recurse(bufferLater, bufferNow);
-      }, (duration - fadeTime) * 1000);
+  function playRain() {
+    if (rain == 1) {
+      Crafty.audio.play('rain1');
+    } else {
+      Crafty.audio.play('rain2');
     }
-  }
-
-  loadSoundFile('rain.mp3', callback);
-}
-
-var soundBuffers = {
-  thunder: [],
-  glug: null,
-  rain: null,
-  dingdong: null,
-  siren: null
-};
-
-loadDingDong = function() {
-  loadSoundFile('dingdong.mp3', function(buffer) {
-    soundBuffers.dingdong = buffer;
-  })
-}
-
-loadGlug = function() {
-  loadSoundFile('glug.mp3', function(buffer) {
-    soundBuffers.glug = buffer;
-  })
-}
-
-loadSiren = function() {
-  loadSoundFile('siren.mp3', function(buffer) {
-    soundBuffers.siren = buffer;
-  })
-}
-
-loadThunder = function() {
-  var thunderSounds = ["thunder1.mp3", "thunder2.mp3", "thunder3.mp3",
-      "thunder4.mp3"];
-
-  for (var i=0; i< thunderSounds.length; i++) {
-    loadSoundFile(thunderSounds[i], function(buffer) {
-      soundBuffers.thunder.push(buffer);
-    });
+     rain = rain == 1 ? 2 : 1;
   }
 }
 
-playSound = function(buffer, volume) {
+playSound = function(name, volume) {
   if (!volume) {
     volume = 1;
   }
 
-  if (context) {
-    source = createSource(buffer);
-    source.gainNode.gain.value = volume;
-    source.source.noteOn(0);
-  }
+  Crafty.audio.play(name, 1, volume);
 };
-
-loadSoundFile = function(filename, callback) {
-  var request = new XMLHttpRequest();
-  request.open('GET', 'sound/' + filename, true);
-  request.responseType = 'arraybuffer';
-  request.onload = function() {
-    context.decodeAudioData(request.response, callback);
-  }
-  request.send();
-}
 
 // a recursive call to trigger a random thunder sample
 // every once in a while
@@ -535,15 +470,12 @@ randomizeThunder = function() {
 // add and remove the class "lightening" to the body
 // a random number of times
 playRandomThunder = function() {
-  var buffers = soundBuffers.thunder;
-  if (buffers.length) {
-    var rand = Math.floor(Math.random() * buffers.length);
+  var rand = Math.floor(Math.random() * 4);
 
-    playSound(buffers[rand]);
+  playSound('thunder' + rand);
 
-    // trigger randomized flashes
-    lightening();
-  }
+  // trigger randomized flashes
+  lightening();
 }
 
 // add and remove the class lightening to the body
@@ -581,17 +513,4 @@ flash = function() {
   setTimeout(function() {
     body.className = '';
   }, 100);
-}
-
-// create a sound source and gain node
-function createSource(buffer) {
-  var source = context.createBufferSource();
-  var gainNode = context.createGainNode();
-  source.buffer = buffer;
-  source.connect(gainNode);
-  gainNode.connect(context.destination);
-  return {
-    source: source,
-    gainNode: gainNode
-  };
 }
