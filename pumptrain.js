@@ -470,7 +470,7 @@ randomizeThunder = function() {
 // add and remove the class "lightening" to the body
 // a random number of times
 playRandomThunder = function() {
-  var rand = Math.floor(Math.random() * 4);
+  var rand = Math.ceil(Math.random() * 4);
 
   playSound('thunder' + rand);
 
