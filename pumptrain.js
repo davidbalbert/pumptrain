@@ -113,14 +113,16 @@ window.onload = function() {
         Crafty.audio.add({
           dingdong: ["sound/dingdong.mp3", "sound/dingdong.ogg", "sound/dingdong.wav"],
           glug: ["sound/glug.mp3", "sound/glug.ogg", "sound/glug.wav"],
-          rain: ["sound/rain-loop.mp3", "sound/rain-loop.ogg", "sound/rain-loop.wav"],
+          rain1: ["sound/rain1.mp3", "sound/rain1.ogg", "sound/rain1.wav"],
+          rain2: ["sound/rain2.mp3", "sound/rain2.ogg", "sound/rain2.wav"],
           siren: ["sound/siren.mp3", "sound/siren.ogg", "sound/siren.wav"],
           thunder1: ["sound/thunder1.mp3", "sound/thunder1.ogg", "sound/thunder1.wav"],
           thunder2: ["sound/thunder2.mp3", "sound/thunder2.ogg", "sound/thunder2.wav"],
           thunder3: ["sound/thunder3.mp3", "sound/thunder3.ogg", "sound/thunder3.wav"],
           thunder4: ["sound/thunder4.mp3", "sound/thunder4.ogg", "sound/thunder4.wav"]
         });
-        Crafty.audio.play('rain', -1);
+
+        loopRain(1);
         Crafty.scene("title");
       },
       function(e) {
@@ -438,6 +440,23 @@ window.onload = function() {
 //
 // sound effects from here on down
 //
+
+// rain is 40sec, with 10sec fades at start and end
+loopRain = function() {
+  var rain = 1;
+
+  playRain();
+  setInterval(playRain, 30000);
+
+  function playRain() {
+    if (rain == 1) {
+      Crafty.audio.play('rain1');
+    } else {
+      Crafty.audio.play('rain2');
+    }
+     rain = rain == 1 ? 2 : 1;
+  }
+}
 
 var context;
 sound = function() {
