@@ -328,27 +328,10 @@ window.onload = function() {
           clearInterval(gameOverInterval);
           gameOverInterval = null;
 
-          var bobHeight = 0;
-          var direction = "up";
+          var trainPositions = [8, 0, -8, 0];
+          var i = 0;
           bobTrainInterval = setInterval(function() {
-            var delta = 8;
-            var limit = 8;
-            if (direction == "up") {
-              if (bobHeight == limit) {
-                direction = "down";
-                bobHeight -= delta;
-              } else {
-                bobHeight += delta;
-              }
-            } else {
-              if (bobHeight <= -limit) {
-                direction = "up";
-                bobHeight += delta;
-              } else {
-                bobHeight -= delta;
-              }
-            }
-            gameOverTrain.attr({y: bobHeight + gameOverTrainHeight});
+            gameOverTrain.attr({y: trainPositions[i++ % 4] + gameOverTrainHeight});
           }, 1000);
 
           // score label
