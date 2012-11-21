@@ -139,8 +139,7 @@ window.onload = function() {
     }, 1000);
 
     var spaceToStart = function(e) {
-      // spacebar
-      if (e.keyCode == 32) {
+      if (e.keyCode === Crafty.keys['SPACE']) {
         clearInterval(playAgainInterval);
         playAgainInterval = null;
         playSound('dingdong');
@@ -447,9 +446,7 @@ loopRain = function() {
 }
 
 playSound = function(name, volume) {
-  if (!volume) {
-    volume = 1;
-  }
+  volume = volume || 1;
 
   Crafty.audio.play(name, 1, volume);
 };
