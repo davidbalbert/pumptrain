@@ -215,7 +215,7 @@ window.onload = function() {
       "firstAve": {x: 370, y: 45},
       "bedfordAve": {x: 522, y: 45},
       "delancySt": {x: 386, y: 243},
-      "marcyAve": {x: 597, y: 243},
+      "yorkSt": {x: 597, y: 243},
       "southFerry": {x: 246, y: 484},
       "wallSt": {x: 324, y: 411},
       "clarkSt": {x: 516, y: 366}
