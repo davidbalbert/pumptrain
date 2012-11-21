@@ -129,13 +129,9 @@ window.onload = function() {
     title2.visible = false;
 
     var playAgainInterval = setInterval(function() {
-      if (title1.visible) {
-        title1.visible = false;
-        title2.visible = true;
-      } else {
-        title1.visible = true;
-        title2.visible = false;
-      }
+        // swap
+        title1.visible = title2.visible;
+        title2.visible = !title1.visible;
     }, 1000);
 
     var spaceToStart = function(e) {
