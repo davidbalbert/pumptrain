@@ -429,30 +429,26 @@ window.onload = function() {
 //
 
 // rain is 40sec, with 10sec fades at start and end
-loopRain = function() {
-  var rain = 1;
+function loopRain() {
+  var rainNum = 1;
 
   playRain();
   setInterval(playRain, 30000);
 
   function playRain() {
-    if (rain == 1) {
-      Crafty.audio.play('rain1');
-    } else {
-      Crafty.audio.play('rain2');
-    }
-    rain = rain == 1 ? 2 : 1;
+    Crafty.audio.play('rain' + rainNum);
+    rainNum = rainNum == 1 ? 2 : 1;
   }
 }
 
-playSound = function(name, volume) {
+function playSound(name, volume) {
   volume = volume || 1;
 
   Crafty.audio.play(name, 1, volume);
 };
 
 // a recursive call to trigger a random thunder sample
-randomizeThunder = function() {
+function randomizeThunder() {
   // wait between 10 and 25 sec
   var wait = Math.ceil(Math.random() * 10000) + 15000;
 
@@ -464,7 +460,7 @@ randomizeThunder = function() {
 
 // play a random thunder sample
 // flash a random number of times
-playRandomThunder = function() {
+function playRandomThunder() {
   var rand = Math.ceil(Math.random() * 4);
   playSound('thunder' + rand);
   lightening();
@@ -472,7 +468,7 @@ playRandomThunder = function() {
 
 // add and remove the class lightening to the body
 // a random number of times with a random interval
-lightening = function() {
+function lightening() {
   var numberOfFlashes = Math.ceil(Math.random() * 3);
   var delay1 = Math.ceil(Math.random() * 400);
   var delay2 = Math.ceil(Math.random() * 400);
@@ -489,7 +485,7 @@ lightening = function() {
   }
 }
 
-flash = function() {
+function flash() {
   var body = document.getElementsByTagName('body')[0];
 
   body.className = 'lightening';
