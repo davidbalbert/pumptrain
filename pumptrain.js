@@ -396,8 +396,7 @@ window.onload = function() {
     // right when the game ends
     setTimeout(function() {
       var startOver = function(e) {
-        // spacebar
-        if (e.keyCode == 32) {
+        if (e.keyCode === Crafty.keys['SPACE']) {
           Crafty.unbind("KeyDown", startOver);
           if (gameOverInterval) {
             clearInterval(gameOverInterval);
