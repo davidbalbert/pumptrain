@@ -305,14 +305,9 @@ window.onload = function() {
     var gameOverWaterLevel = HEIGHT;
     var gameOverTrain;
 
-    moveWater = function(direction, delta) {
-      if (direction == 'up') {
-        gameOverWaterLevel -= delta;
-      } else {
+    var moveWater = function(delta) {
         gameOverWaterLevel += delta;
-      }
-
-      water.attr({y: gameOverWaterLevel});
+        water.attr({y: gameOverWaterLevel});
     };
 
     var playAgainInterval;
@@ -323,7 +318,7 @@ window.onload = function() {
     var highScoreElements = [];
     var gameOverInterval = setInterval(function() {
       if (waterDirection == 'up') {
-        moveWater(waterDirection, 8);
+        moveWater(-8);
 
         if (gameOverWaterLevel <= 0) {
           gameOverTrain = Crafty.e('2D, DOM, Image').attr({x: WIDTH * 0.28, y: gameOverTrainHeight, z: 4}).image('images/game-over-train.png');
@@ -331,7 +326,7 @@ window.onload = function() {
           waterDirection = 'down';
         }
       } else {
-        moveWater(waterDirection, 8);
+        moveWater(8);
 
         if (gameOverWaterLevel >= HEIGHT / 2.1) {
           clearInterval(gameOverInterval);
